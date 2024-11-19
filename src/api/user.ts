@@ -7,26 +7,23 @@ type LoginInfo = {
 }
 
 type RegisterInfo = {
-    role: string,
     name: string,
     phone: string,
     password: string,
-    address: string,
-    storeId?: number,
+    studentId: string,
 }
 
 type UpdateInfo = {
     name?: string,
     phone?: string,
     password?: string,
-    address?: string,
-    receiveAddress?: string[],
-    receivePhone?: string[],
+    studentId?: string,
 }
 
 // 如果有“Vue: This may be converted to an async function”警告，可以不管
 // 用户登录
 export const userLogin = (loginInfo: LoginInfo) => {
+    //console.log(loginInfo)
     return axios.post(`${USER_MODULE}/login`, null, {params: loginInfo})
         .then(res => {
             return res
@@ -44,7 +41,7 @@ export const userRegister = (registerInfo: RegisterInfo) => {
 
 // 获取用户信息
 export const userInfo = () => {
-    return axios.get(`${USER_MODULE}`)
+    return axios.get(`${USER_MODULE}/information`)
         .then(res => {
             return res
         })
@@ -54,7 +51,8 @@ export const userInfo = () => {
 // 更新用户信息
 export const userInfoUpdate = (updateInfo: UpdateInfo) => {
     console.log(updateInfo)
-    return axios.post(`${USER_MODULE}`, updateInfo, {headers: {'Content-Type': 'application/json'}})
+    return axios.post(`${USER_MODULE}/update`, updateInfo, 
+        {headers: {'Content-Type': 'application/json'}})
         .then(res => {
             return res
         })

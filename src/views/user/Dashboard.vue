@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import {userInfo, userInfoUpdate} from '../../api/user.ts'
-import {parseRole, parseTime} from "../../utils"
+//import {parseRole, parseTime} from "../../utils"
 import {router} from '../../router'
 import {UserFilled} from "@element-plus/icons-vue"
-import {userInfo_storename} from "../../api/store.ts"
+//import {userInfo_storename} from "../../api/store.ts"
 import { Md5 } from 'ts-md5';
-import { Remove } from "@element-plus/icons-vue";
-const role = sessionStorage.getItem("role")
+//import { Remove } from "@element-plus/icons-vue";
+//const role = sessionStorage.getItem("role")
 const name = ref('')
-const storeName = ref('')
-const storeId = ref()
+//const storeName = ref('')
+//const storeId = ref()
 const tel = ref('')
-const address = ref('')
-const regTime = ref()
-
+//const address = ref('')
+//const regTime = ref()
+const studentId = ref('')
+const newStudentId =ref('')
 const newName = ref('')
-
+const newTel = ref('')
+const pass_word = ref('')
 const displayInfoCard = ref(false)
 
 const password = ref('')
@@ -25,44 +27,49 @@ const confirmPassword = ref('')
 const hasConfirmPasswordInput = computed(() => confirmPassword.value != '')
 const isPasswordIdentical = computed(() => password.value == confirmPassword.value)
 const changeDisabled = computed(() => {
-  return !(hasConfirmPasswordInput.value && isPasswordIdentical.value)
+  return !((hasConfirmPasswordInput.value && isPasswordIdentical.value)||newName.value!=name.value||(newTel.value!=tel.value&&telLegal.value)||newStudentId.value!=studentId.value)
 })
 
 
-let telList = ref<string[]>([])
-let addressList = ref<string[]>([])
+//let telList = ref<string[]>([])
+//let addressList = ref<string[]>([])
 getUserInfo()
 function getUserInfo() {
   userInfo().then(res => {
+    console.log(res.data);
     //res.data.result =res.data[0]
     name.value = res.data.result.name
     tel.value = res.data.result.phone
-    address.value = res.data.result.address
-    telList.value = res.data.result.receivePhone
-    addressList.value = res.data.result.receiveAddress
-    storeId.value = res.data.result.storeId
-    regTime.value = parseTime(res.data.result.createTime)
+    studentId.value = res.data.result.studentId
+    pass_word.value = res.data.result.password
+    //address.value = res.data.result.address
+    //telList.value = res.data.result.receivePhone
+    //addressList.value = res.data.result.receiveAddress
+    //storeId.value = res.data.result.storeId
+    //regTime.value = parseTime(res.data.result.createTime)
     newName.value = name.value
-    if(role === 'STAFF'){
-      userInfo_storename(storeId.value).then(res =>{
-        storeName.value=res.data
-      })
-    }
+    newStudentId.value = studentId.value
+    newTel.value = tel.value
+    // if(role === 'STAFF'){
+    //   userInfo_storename(storeId.value).then(res =>{
+    //     storeName.value=res.data
+    //   })
+    // }
   })
 }
 
-function gocreatestore(){
-    router.push({path:'/createStore'})
-}
-function gostore(){
-    router.push({
-      path:'/storeDetail',
-      query:{
-        storeId:storeId.value
-   }})
-}
+// function gocreatestore(){
+//     router.push({path:'/createStore'})
+// }
+// function gostore(){
+//     router.push({
+//       path:'/storeDetail',
+//       query:{
+//         storeId:storeId.value
+//    }})
+// }
 
-function updateInfo() {
+/*function updateInfo() {
   //console.log(telList.value)
   //console.log(addressList.value)
   //手机号要合法，地址不能为空
@@ -89,10 +96,10 @@ function updateInfo() {
   userInfoUpdate({
     name: newName.value,
     password: undefined,
-    phone: telList.value[0],
-    address: addressList.value[0],
-    receivePhone: telList.value,
-    receiveAddress: addressList.value,
+    //phone: telList.value[0],
+    //address: addressList.value[0],
+    //receivePhone: telList.value,
+    //receiveAddress: addressList.value,
   }).then(res => {
     if (res.data.code === '000') {
       ElMessage({
@@ -110,18 +117,24 @@ function updateInfo() {
     }
   })
 }
-
+*/
 function updatePassword() {
-  const md5:any = new Md5()
-  md5.appendAsciiStr(password.value)
+  //const md5:any = new Md5()
+  //md5.appendAsciiStr(password.value)
   //password.value = md5.end()
+  if(password.value!=''){
+    pass_word.value = password.value
+  }
   userInfoUpdate({
-    password: md5.end(),
+    password: pass_word.value,
+    name: newName.value,
+    phone: newTel.value,
+    studentId: newStudentId.value
   }).then(res => {
     if (res.data.code === '000') {
-      password.value = ''
-      confirmPassword.value = ''
-      ElMessageBox.alert(
+      
+      if(password.value!=''){
+        ElMessageBox.alert(
           `请重新登录`,
           '修改成功',
           {
@@ -132,6 +145,18 @@ function updatePassword() {
             roundButton: true,
             center: true
           }).then(() => router.push({path: "/login"}))
+        }
+      else{
+        ElMessage({
+          customClass: 'customMessage',
+          type: 'success',
+          message: '更新成功！',
+        })
+        getUserInfo()
+        displayInfoCard.value = false
+      }
+      password.value = ''
+      confirmPassword.value = ''
     } else if (res.data.code === '400') {
       ElMessage({
         customClass: 'customMessage',
@@ -143,21 +168,21 @@ function updatePassword() {
     }
   })
 }
-function addTel() {
-  telList.value.push('');
-}
-function addAddress() {
-  addressList.value.push('');
-}
-function setDefaultTel(index: number) {
-  const defaultTel = telList.value.splice(index, 1)[0];
-  telList.value.unshift(defaultTel);
-}
-function setDefaultAddress(index: number) {
-  const defaultAddress = addressList.value.splice(index, 1)[0];
-  addressList.value.unshift(defaultAddress);
-}
-function removeAddress(index: number) {
+// function addTel() {
+//   telList.value.push('');
+// }
+// function addAddress() {
+//   addressList.value.push('');
+// }
+// function setDefaultTel(index: number) {
+//   const defaultTel = telList.value.splice(index, 1)[0];
+//   telList.value.unshift(defaultTel);
+// }
+// function setDefaultAddress(index: number) {
+//   const defaultAddress = addressList.value.splice(index, 1)[0];
+//   addressList.value.unshift(defaultAddress);
+// }
+/*function removeAddress(index: number) {
   ElMessageBox.confirm(
     '确定要删除该地址吗？',
     '警告',
@@ -198,12 +223,13 @@ function removeTel(index: number) {
     else telList.value.splice(index, 1);
   }).catch(() => {
   });
-}
+}*/
 // 电话号码的规则
 const chinaMobileRegex = /^1(3[0-9]|4[579]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[189])\d{8}$/
-function telLegal(index: number) {
-  return chinaMobileRegex.test(telList.value[index])
-}
+const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
+// function telLegal(index: number) {
+//   return chinaMobileRegex.test(telList.value[index])
+// }
 </script>
 
 <template>
@@ -225,45 +251,46 @@ function telLegal(index: number) {
         <template #extra>
           <el-button type="primary"
                      @click="displayInfoCard = displayInfoCard === false;">
-            <span v-if="displayInfoCard">修改密码</span>
+            <span v-if="displayInfoCard">返回</span>
             <span v-else>修改个人信息</span>
           </el-button>
         </template>
 
-        <el-descriptions-item label="身份">
+        <!-- <el-descriptions-item label="身份">
           <el-tag>{{ parseRole(role) }}</el-tag>
-        </el-descriptions-item>
-
-        <el-descriptions-item label="所属商店" v-if="role === 'STAFF'">
-          {{ storeName }}
-        </el-descriptions-item>
+        </el-descriptions-item> -->
 
         <el-descriptions-item label="联系电话">
           {{ tel }}
         </el-descriptions-item>
+        <el-descriptions-item label="学号">
+          {{ studentId}}
+        </el-descriptions-item>
 
-        <el-descriptions-item label="地址" v-if="role === 'CUSTOMER' || role === 'STAFF'">
+        <!-- <el-descriptions-item label="地址" v-if="role === 'CUSTOMER' || role === 'STAFF'">
           {{ address }}
-        </el-descriptions-item>
+        </el-descriptions-item> -->
 
-        <el-descriptions-item label="注册时间">
+        <!-- <el-descriptions-item label="注册时间">
           {{ regTime }}
-        </el-descriptions-item>
+        </el-descriptions-item> -->
       </el-descriptions>
 
       <el-divider></el-divider>
       
     <!-- create a store using the button -->
-    <el-button class = "Store_button" @click="gocreatestore" v-if="role === 'MANAGER'">
+    <!-- <el-button class = "Store_button" @click="gocreatestore" v-if="role === 'MANAGER'">
       创建商店
     </el-button>
     <el-button class = "Store_button" @click="gostore" v-if="role === 'STAFF'">
       我的商店
-    </el-button>
+    </el-button> -->
 
     </el-card>
+    <el-card v-if="!displayInfoCard" class="change-card">
 
-    <el-card v-if="displayInfoCard" class="change-card">
+    </el-card>
+    <!-- <el-card v-if="displayInfoCard" class="change-card">
       <template #header>
         <div class="card-header">
           <span>个人信息</span>
@@ -325,12 +352,12 @@ function telLegal(index: number) {
         </el-form-item>
         <el-button type="primary" @click="addAddress" v-if="role==='CUSTOMER'">添加收货地址</el-button>
       </el-form>
-    </el-card>
+    </el-card> -->
 
-    <el-card v-if="!displayInfoCard" class="change-card">
+    <el-card v-if="displayInfoCard" class="change-card">
       <template #header>
         <div class="card-header">
-          <span>修改密码</span>
+          <span>修改个人信息</span>
           <el-button @click="updatePassword" :disabled="changeDisabled">
             修改
           </el-button>
@@ -338,6 +365,19 @@ function telLegal(index: number) {
       </template>
 
       <el-form>
+        <el-form-item>
+          <label for="name">名称</label>
+          <el-input type="name" id="name" v-model="newName" required/>
+        </el-form-item>
+        <el-form-item>
+          <label for="studentId">学号</label>
+          <el-input type="studentId" id="studentId" v-model="newStudentId" required/>
+        </el-form-item>
+        <el-form-item>
+          <label v-if="!telLegal" class="error-warn" for="tel">手机号不合法</label>
+          <label v-else for="tel">手机号</label>
+          <el-input type="tel" id="tel" v-model="newTel" required/>
+        </el-form-item>
         <el-form-item>
           <label for="password">密码</label>
           <el-input type="password" id="password" v-model="password" placeholder="•••••••••" required/>

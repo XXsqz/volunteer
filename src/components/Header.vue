@@ -29,51 +29,25 @@ function logout() {
 
 <template>
   <el-header class="custom-header" height="20">
-    <el-row :gutter="10">
+    <el-row :gutter="10" justify="space-between">
 
       <el-col :span="3" class="header-icon">
         <router-link to="/allStore" v-slot="{navigate}" class="no-link">
-          <h1 @click="navigate" class="header-text"> 蓝鲸在线购物</h1>
+          <h1 @click="navigate" class="header-text"> volunteer</h1>
         </router-link>
       </el-col>
-      
-      <el-col :span="2">
-        <el-tag class="role-tag" size="large">{{ parseRole(role) }}版</el-tag>
-      </el-col>
-<!--自制的愚蠢的测试商品创建的按钮
-      <el-col :span="2" class="header-icon">
-        <router-link to="/createProduct" v-slot="{navigate}" class="no-link">
-          <h1 @click="navigate" class="header-text"> 商品</h1>
-        </router-link>
-      </el-col>
--->
-      <!--新增按钮时需要调整span大小-->
-      <el-col :span="15">
-      </el-col>
+      <!-- <el-col :span="15">
+      </el-col> -->
 
-      <el-col :span="1" class="header-icon">
+      <el-col :span="3" class="header-icon">
         <router-link to="/dashboard" v-slot="{navigate}">
-          <el-icon @click="navigate" :size="35" color="white" ><User /></el-icon>
+          <el-icon @click="navigate" :size="35" color="blue" ><User /></el-icon>
+          <el-icon @click="logout" :size="35" color="blue" style="margin-left: 10px;" ><SwitchButton /></el-icon>
         </router-link>
       </el-col>
-      <!-- 新增助教实现 -->
-      <el-col :span="1" class="header-icon">
-        <router-link to="/allOrder" v-slot="{navigate}">
-          <el-icon @click="navigate" :size="35" color="white" ><Document /></el-icon>
-        </router-link>
-      </el-col>
-      <!--助教实现，优惠券组页面-->
-      <el-col :span="1" class="header-icon">
-        <router-link to="/allCoupon" v-slot="{navigate}">
-          <el-icon @click="navigate" :size="35" color="white" ><Discount /></el-icon>
-        </router-link>
-      </el-col>
-
-      <el-col :span="1" class="header-icon">
-        <a @click="logout">
-          <el-icon :size="35" color="white" ><SwitchButton /></el-icon>
-        </a>
-      </el-col>
+    
+        
+      
     </el-row>
   </el-header>
 </template>
@@ -81,7 +55,7 @@ function logout() {
 
 <style scoped>
 .custom-header {
-  background-color: #409eff;
+  background-color: #f9fafc;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
@@ -99,7 +73,7 @@ function logout() {
 }
 
 .header-text {
-  color:white;
+  color:blue;
   font-size: x-large;
   min-width: max-content;
   margin-top: 15px;
