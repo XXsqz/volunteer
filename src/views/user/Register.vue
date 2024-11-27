@@ -2,7 +2,7 @@
 import {ref, computed} from 'vue'
 import {router} from '../../router'
 import {userRegister} from "../../api/user.ts"
-import { Md5 } from 'ts-md5';
+//import { Md5 } from 'ts-md5';
 // 输入框值（需要在前端拦截不合法输入：是否为空+额外规则）
 const studentId = ref('')
 const name = ref('')
@@ -48,14 +48,14 @@ const registerDisabled = computed(() => {
 })
 // 注册按钮触发
 function handleRegister() {
-  const md5:any = new Md5()
-  md5.appendAsciiStr(password.value)
+  //const md5:any = new Md5()
+  //md5.appendAsciiStr(password.value)
   //password.value = md5.end()
   userRegister({
     studentId: studentId.value,
     name: name.value,
     phone: tel.value,
-    password: md5.end(),
+    password: password.value,
   }).then(res => {
     if (res.data.code === '000') {  //类型守卫，它检查 res.data 对象中是否存在名为 code 的属性
       ElMessage({

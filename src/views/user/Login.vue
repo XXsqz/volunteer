@@ -23,12 +23,12 @@ const loginDisabled = computed(() => {
 
 // 登录按钮触发
 function handleLogin() {
-  const md5:any = new Md5()
-  md5.appendAsciiStr(password.value)
+  //const md5:any = new Md5()
+  //md5.appendAsciiStr(password.value)
   //password.value = md5.end()
   userLogin({
     phone: tel.value,
-    password: md5.end()
+    password: password.value
   }).then(res => {
     if (res.data.code === '000') {
       ElMessage({
