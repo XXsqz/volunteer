@@ -28,6 +28,14 @@ export default {
       },
     };
   },
+  mounted() {
+    // 确保在组件挂载后访问 Quill 实例
+    this.$nextTick(() => {
+      if (this.$refs.editor && this.$refs.editor.quill) {
+        this.quill = this.$refs.editor.quill;
+      }
+    });
+  },
   methods: {
     onEditorChange(content) {
        this.content = content;
@@ -66,10 +74,19 @@ export default {
       console.log("json",JSON.stringify(this.content));
       console.log("提交文章");  
       try {
+        // console.log(this.$refs)
+        // console.log("0")
+        // console.log(this.$refs.editor)
+        // console.log("1");
+        const quill = this.$refs.editor.getQuill(); // 获取 Quill 实例
+        //console.log(quill)
+        const editorContent = quill.root.innerHTML; // 获取编辑器的 HTML 内容
+        //console.log(editorContent)
         const response = await axios.post("/api/articles/add", {
+          id: 3,
           title: this.title,
           author: this.author,
-          content: JSON.stringify(this.content),
+          content: editorContent, 
           eventId: 1, // 示例 EventId，可根据实际需求动态获取
           images: this.images, // 图片 URL 列表
         });
