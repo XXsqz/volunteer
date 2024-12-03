@@ -81,7 +81,7 @@ export default {
         const quill = this.$refs.editor.getQuill(); // 获取 Quill 实例
         //console.log(quill)
         const editorContent = quill.root.innerHTML; // 获取编辑器的 HTML 内容
-        //console.log(editorContent)
+        console.log(editorContent)
         const response = await axios.post("/api/articles/add", {
           id: 3,
           title: this.title,
