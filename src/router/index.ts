@@ -19,6 +19,7 @@ const router = createRouter({
         component: () => import('../components/Editor.vue'),
         meta: {title: '编辑器'}
     },
+    
     {
         path: '/home',
         redirect: '/allStore',
@@ -74,6 +75,12 @@ const router = createRouter({
                     title: '我的优惠券',
                     permission: ['CUSTOMER']
                 }
+            },
+            {
+                path: '/edit',
+                name: 'edit',
+                component: () => import('../views/admin/edit.vue'),
+                meta: {title: '管理界面'}
             },
 
             {

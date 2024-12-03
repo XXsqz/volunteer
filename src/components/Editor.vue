@@ -115,3 +115,33 @@ export default {
      @update:content="onEditorChange"/>
     <button @click="submitArticle">提交文章</button>
 </template>
+<style scoped>
+.editor-container {
+  max-width: 100%; /* 限制最大宽度为容器的100% */
+  max-height: 100%; /* 限制最大高度为容器的100% */
+  overflow: auto; /* 如果内容超出容器，显示滚动条 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 设置子元素之间的间距 */
+}
+
+.title-input, .author-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box; /* 包括内边距和边框在内的宽度和高度 */
+}
+
+button {
+  align-self: flex-start; /* 将按钮对齐到容器的起始位置 */
+  padding: 10px 20px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px; /* 设置圆角 */
+}
+
+button:hover {
+  background-color: #2980b9; /* 设置悬停效果 */
+}
+</style>
