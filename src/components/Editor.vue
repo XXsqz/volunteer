@@ -1,6 +1,7 @@
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { addArticle } from '../api/article';
 import axios from "axios";
 export default {
   components: {
@@ -12,29 +13,30 @@ export default {
       author: "",
       content: "",
       images: [], // 用于存储图片的 URL 列表
-      modules: {
-        toolbar: {
-          container: [
-            ["bold", "italic", "underline", "strike"],
-            [{ header: [1, 2, 3, false] }],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["image", "link"],
-            ["clean"],
-          ],
-          handlers: {
-            image: this.imageHandler,
-          },
-        },
-      },
+      // editorOptions: {
+      //   theme: 'snow',
+      //   modules: {
+      //     toolbar: [
+      //       [{ 'header': 1 }, { 'header': 2 }],
+      //       ['bold', 'italic', 'underline', 'strike'],
+      //       [{'list': 'ordered'}, {'list': 'bullet'}],
+      //       ['link'],
+      //       ['image'], //保留默认的图片按钮
+      //       [{ 'image': 'imageHandler' }], // 使用字符串引用方法名
+      //       ['clean']
+      //     ]
+      //   }
+      // }
     };
   },
   mounted() {
     // 确保在组件挂载后访问 Quill 实例
-    this.$nextTick(() => {
-      if (this.$refs.editor && this.$refs.editor.quill) {
-        this.quill = this.$refs.editor.quill;
+    setTimeout(() => {
+      if (this.$refs.editor && this.$refs.editor.getQuill()) {
+        this.quill = this.$refs.editor.getQuill();
+        this.quill.getModule('toolbar').addHandler('image', this.imageHandler);// 自定义图片按钮功能
       }
-    });
+    }, 0); 
   },
   methods: {
     onEditorChange(content) {
@@ -57,6 +59,7 @@ export default {
             headers: { "Content-Type": "multipart/form-data" },
           });
           const imageUrl = response.data; // 上传返回的图片 URL
+          console.log("图片上传成功:", imageUrl);
           this.images.push(imageUrl); // 保存图片 URL
           const range = this.$refs.editor.quill.getSelection(); // 获取光标位置
           this.$refs.editor.quill.insertEmbed(range.index, "image", imageUrl); // 插入图片
@@ -74,24 +77,22 @@ export default {
       console.log("json",JSON.stringify(this.content));
       console.log("提交文章");  
       try {
-        // console.log(this.$refs)
-        // console.log("0")
-        // console.log(this.$refs.editor)
-        // console.log("1");
         const quill = this.$refs.editor.getQuill(); // 获取 Quill 实例
         //console.log(quill)
-        const editorContent = quill.root.innerHTML; // 获取编辑器的 HTML 内容
-        console.log(editorContent)
-        const response = await axios.post("/api/articles/add", {
-          id: 3,
+        const editorHTML = quill.root.innerHTML; // 获取编辑器的 HTML 内容
+        const editorContent = quill.getText(0,50); // 获取编辑器的 Delta 对象
+        //console.log(editorContent)
+        addArticle({
           title: this.title,
           author: this.author,
-          content: editorContent, 
+          content: editorHTML, 
           eventId: 1, // 示例 EventId，可根据实际需求动态获取
           images: this.images, // 图片 URL 列表
-        });
+        }).then(res => {
+        console.log("提交文章成功:", res);//目前没有code的差异，导致前端读不出来请求是否正确
         alert("文章提交成功！");
         this.resetForm();
+      })
       } catch (error) {
         console.error("提交文章失败:", error);
         alert("提交失败，请稍后重试！");
