@@ -22,7 +22,6 @@ const router = createRouter({
     
     {
         path: '/home',
-        redirect: '/allStore',
         component: () => import('../views/Home.vue'),
         children: [
             {
