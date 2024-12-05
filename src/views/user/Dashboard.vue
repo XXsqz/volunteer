@@ -36,7 +36,7 @@ const changeDisabled = computed(() => {
 getUserInfo()
 function getUserInfo() {
   userInfo().then(res => {
-    console.log(res.data);
+    //console.log(res.data);
     //res.data.result =res.data[0]
     name.value = res.data.result.name
     tel.value = res.data.result.phone

@@ -59,10 +59,10 @@ export default {
             headers: { "Content-Type": "multipart/form-data" },
           });
           const imageUrl = response.data; // 上传返回的图片 URL
-          console.log("图片上传成功:", imageUrl);
+          console.log("图片上传:", imageUrl);
           this.images.push(imageUrl); // 保存图片 URL
-          const range = this.$refs.editor.quill.getSelection(); // 获取光标位置
-          this.$refs.editor.quill.insertEmbed(range.index, "image", imageUrl); // 插入图片
+          const range = this.$refs.editor.getQuill().getSelection(); // 获取光标位置
+          this.$refs.editor.getQuill().insertEmbed(range.index, "image", imageUrl); // 插入图片
         } catch (error) {
           console.error("图片上传失败:", error);
         }
@@ -80,18 +80,26 @@ export default {
         const quill = this.$refs.editor.getQuill(); // 获取 Quill 实例
         //console.log(quill)
         const editorHTML = quill.root.innerHTML; // 获取编辑器的 HTML 内容
-        const editorContent = quill.getText(0,50); // 获取编辑器的 Delta 对象
-        //console.log(editorContent)
+        // 获取编辑器的 Delta 对象
+        const editorContent = quill.getContents();
+        const editorText = quill.getText(0,50);
+        console.log(editorContent)
+        console.log(JSON.stringify(editorContent))
         addArticle({
           title: this.title,
           author: this.author,
-          content: editorHTML, 
+          content: JSON.stringify(editorContent),
           eventId: 1, // 示例 EventId，可根据实际需求动态获取
           images: this.images, // 图片 URL 列表
         }).then(res => {
-        console.log("提交文章成功:", res);//目前没有code的差异，导致前端读不出来请求是否正确
-        alert("文章提交成功！");
-        this.resetForm();
+          if (res.data.code === '000') {
+            console.log("提交文章成功:", res);
+            alert("文章提交成功！");
+            this.resetForm();
+          }
+          else if (res.data.code === '400') {
+            alert("提交失败，请稍后重试！");
+          }
       })
       } catch (error) {
         console.error("提交文章失败:", error);
