@@ -13,9 +13,15 @@ const router = createRouter({
         path: '/register',
         component: () => import('../views/user/Register.vue'),
         meta: {title: '用户注册'}
-    }, {
+    }, 
+    {
+        path: '/editor',
+        component: () => import('../components/Editor.vue'),
+        meta: {title: '编辑器'}
+    },
+    
+    {
         path: '/home',
-        redirect: '/allStore',
         component: () => import('../views/Home.vue'),
         children: [
             {
@@ -24,90 +30,23 @@ const router = createRouter({
                 component: () => import('../views/user/Dashboard.vue'),
                 meta: {title: '个人信息'}
             },
-            //以下为Lab2新增，添加了商店模块的界面，请大家自己添加商品模块的界面
             {
-                path: '/allStore',
-                name: 'allStore',
-                component: () => import('../views/store/AllStore.vue'),
-                meta: {title: '商店列表界面/主页'}
+                path: '/volunteer',
+                name: 'volunteer',
+                component: () => import('../views/Home/volunteer.vue'),
+                meta: {title: '主页'}
             },
-            //你也可以把创建商店界面改成一个弹窗
-            
             {
-                path: '/allorder',
-                name: 'allorder',
-                component: () => import('../views/product/AllOrder.vue'),
-                meta: {
-                    title: '订单主页'
-                }
+                path: '/volunteerDetail',
+                name: 'volunteerDetail',
+                component: () => import('../views/Home/volunteerDetail.vue'),
+                meta: {title: '详细页面'}
             },
-
             {
-                path: '/searchforproduct',
-                name: 'searchforproduct',
-                component: () => import('../views/product/SearchForProduct.vue'),
-                meta: {
-                    title: '搜索商品'
-                }
-            },
-
-            {
-                path: '/allCoupon',
-                name: 'allCoupon',
-                component: () => import('../views/coupon/AllCoupon.vue'),
-                meta: {
-                    title: '优惠券主页',
-                }
-            },
-
-            {
-                path: '/myCoupon',
-                name: 'myCoupon',
-                component: () => import('../views/coupon/MyCoupon.vue'),
-                meta: {
-                    title: '我的优惠券',
-                    permission: ['CUSTOMER']
-                }
-            },
-
-            {
-                path: '/CreateStore',
-                name: 'createStore',
-                component: () => import('../views/store/CreateStore.vue'),
-                meta: {
-                    title: '创建商店',
-                    permission: ['MANAGER']
-                }
-            },
-            
-            {
-                path: '/createProduct',
-                name: 'createProduct',
-                component: () => import('../views/product/CreateProduct.vue'),
-                meta: {
-                    title: '创建商品',
-                    permission: ['STAFF']
-                }
-            },
-//
-//以下原来path: '/storeDetail/:storeId',
-            {
-                path: '/storeDetail',
-                name: 'storeDetail',
-                component: () => import('../views/store/StoreDetail.vue'),
-                meta: {
-                    title: '店铺详情'
-                }
-            },
-
-            { 
-                path: '/productDetail',
-                name: 'productDetail',
-                component: () => import('../views/product/ProductDetail.vue'),
-                meta: {
-                    title: '商品详情'
-                }
-        
+                path: '/edit',
+                name: 'edit',
+                component: () => import('../views/admin/edit.vue'),
+                meta: {title: '管理界面'}
             },
         ]
     },  
@@ -122,33 +61,33 @@ const router = createRouter({
     }]
 })
 
-router.beforeEach((to, _, next) => {
-    const token: string | null = sessionStorage.getItem('token');
-    const role: string | null = sessionStorage.getItem('role')
+// router.beforeEach((to, _, next) => {
+//     const token: string | null = sessionStorage.getItem('token');
+//     const role: string | null = sessionStorage.getItem('role')
 
-    if (to.meta.title) {
-        document.title = to.meta.title
-    }
+//     if (to.meta.title) {
+//         document.title = to.meta.title
+//     }
 
-    if (token) {
-        if (to.meta.permission) {
-            if (to.meta.permission.includes(role!)) {
-                next()
-            } else {
-                next('/404')
-            }
-        } else {
-            next()
-        }
-    } else {
-        if (to.path === '/login') {
-            next();
-        } else if (to.path === '/register') {
-            next()
-        } else {
-            next('/login')
-        }
-    }
-})
+//     if (token) {
+//         if (to.meta.permission) {
+//             if (to.meta.permission.includes(role!)) {
+//                 next()
+//             } else {
+//                 next('/404')
+//             }
+//         } else {
+//             next()
+//         }
+//     } else {
+//         if (to.path === '/login') {
+//             next();
+//         } else if (to.path === '/register') {
+//             next()
+//         } else {
+//             next('/login')
+//         }
+//     }
+// })
 
 export {router}
