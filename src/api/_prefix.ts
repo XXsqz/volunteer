@@ -5,4 +5,5 @@ export const API_MODULE = '/api'
 export const USER_MODULE = `${API_MODULE}/users`
 //文章模块
 export const ARTICLE_MODULE = `${API_MODULE}/articles`
-//Lab2新增
+//项目模块
+export const EVENT_MODULE = `${API_MODULE}/events`

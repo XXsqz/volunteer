@@ -6,6 +6,7 @@
                 <ul>
                     <li :class="{ active: activeMenu === 'home' }" @click="setActiveMenu('home')">主页</li>
                     <li :class="{ active: activeMenu === 'new-project' }" @click="setActiveMenu('new-project')">新建项目</li>
+                    <li :class="{ active: activeMenu === 'new-article' }" @click="setActiveMenu('new-article')">新建文章</li>
                     <li :class="{ active: activeMenu === 'view-projects' }" @click="setActiveMenu('view-projects')">查看项目</li>
                     <li :class="{ active: activeMenu === 'drafts' }" @click="setActiveMenu('drafts')">草稿箱</li>
                 </ul>
@@ -52,7 +53,12 @@
           </div>
         </main>
         <main v-if="activeMenu === 'new-project'">
+            <!-- <NewProject /> -->
+            <NewTable />
+        </main>
+        <main v-if="activeMenu === 'new-article'">
             <NewProject />
+            <!-- <NewTable /> -->
         </main>
         <main v-if="activeMenu === 'drafts'">
           <h1>Drafts</h1>
@@ -69,6 +75,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import NewProject from '../../components/Editor.vue'; // 导入新组件
+import NewTable from '../../components/Table.vue'; // 导入新组件
 const searchQuery = ref('');
 const components = ref([
     { id: 1, name: 'Health Record Management', createdBy: 'Lucy', introduction: 'Provides Basic Patient Information Management Functionality', scope: 'Healthcare Sector', scene: 'Offline Hospital Scenario', lastModifiedTime: '2024/2/29 20:58:14' },

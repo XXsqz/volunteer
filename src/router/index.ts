@@ -19,7 +19,11 @@ const router = createRouter({
         component: () => import('../components/Editor.vue'),
         meta: {title: '编辑器'}
     },
-    
+    {
+        path: '/table',
+        component: () => import('../components/Table.vue'),
+        meta: {title: '表单'}
+    },
     {
         path: '/home',
         component: () => import('../views/Home.vue'),
