@@ -2,10 +2,15 @@
 import { ref } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { addArticle } from '../api/article';
+import { addArticle, getArticle, updateArticle } from '../api/article';
 import axios from "axios";
 import { getAllEvent } from '../api/event';
-import { id } from 'element-plus/es/locales.mjs';
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps<{
+  param1: number;
+}>();
+const emits = defineEmits(['submitted']);
 
 const title = ref("");
 const author = ref("");
@@ -27,26 +32,52 @@ const submitArticle = async () => {
     const quill = editorRef.value.getQuill(); // 获取 Quill 实例
     //const editorHTML = quill.root.innerHTML; // 获取编辑器的 HTML 内容
     const editorContent = quill.getContents();
-    //const editorText = quill.getText(0, 50);
+    const editorText = quill.getText(0, 20);
     console.log(eventId.value);
     console.log(editorContent);
     console.log(JSON.stringify(editorContent));
-    await addArticle({
-      title: title.value,
-      author: author.value,
-      content: JSON.stringify(editorContent),
-      eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
-      images: images.value, // 图片 URL 列表
-    }).then(res => {
-      if (res.data.code === '000') {
-        console.log("文章保存成功:", res);
-        alert("文章保存成功！");
-        resetForm();
-      }
-      else if (res.data.code === '400') {
-        alert("保存失败，请稍后重试！");
-      }
-    });
+    if(props.param1 === 0){
+      addArticle({
+        title: title.value,
+        author: author.value,
+        content: JSON.stringify(editorContent),
+        abstracts: editorText,
+        eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
+        images: images.value, // 图片 URL 列表
+      }).then(res => {
+        if (res.data.code === '000') {
+          console.log("文章保存成功:", res);
+          alert("文章保存成功！");
+          resetForm();
+          //emits('submitted');
+        }
+        else if (res.data.code === '400') {
+          alert("保存失败，请稍后重试！");
+        }
+      });
+    }
+    else{
+      console.log("编辑文章");
+      updateArticle({
+        id: props.param1,
+        title: title.value,
+        author: author.value,
+        content: JSON.stringify(editorContent),
+        abstracts: editorText,
+        eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
+        images: images.value, // 图片 URL 列表
+      }).then(res => {
+        if (res.data.code === '000') {
+          console.log("文章保存成功:", res);
+          alert("文章保存成功！");
+          resetForm();
+          emits('submitted');
+        }
+        else if (res.data.code === '400') {
+          alert("保存失败，请稍后重试！");
+        }
+      });
+    }
   } catch (error) {
     console.error("保存文章失败:", error);
     alert("保存失败，请稍后重试！");
@@ -95,6 +126,17 @@ function handleReplace() {
     console.log(res);
     events.value = res.data.result;
   });
+  if(props.param1){
+    console.log("编辑文章");
+    getArticle(Number(props.param1)).then(res => {
+      console.log("获取文章成功:", res);
+      title.value = res.data.result.title;
+      author.value = res.data.result.author;
+      eventId.value = res.data.result.eventId;
+      //content.value = res.data.result.content;
+      editorRef.value.getQuill().setContents(JSON.parse(res.data.result.content));
+    });
+  }
 }
 setTimeout(function() {
 	if(document) {
