@@ -43,6 +43,7 @@ const submitArticle = async () => {
         content: JSON.stringify(editorContent),
         abstracts: editorText,
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
+        mainImage: images.value[0], // 主图 URL
         images: images.value, // 图片 URL 列表
       }).then(res => {
         if (res.data.code === '000') {
@@ -65,6 +66,7 @@ const submitArticle = async () => {
         content: JSON.stringify(editorContent),
         abstracts: editorText,
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
+        mainImage: "", // 主图 URL
         images: images.value, // 图片 URL 列表
       }).then(res => {
         if (res.data.code === '000') {
@@ -101,6 +103,7 @@ const imageHandler = () => {
   input.setAttribute("accept", "image/*");
   input.click();
   input.onchange = async () => {
+    if (!input.files) return;
     const file = input.files[0];
     const formData = new FormData();
     formData.append("file", file);
