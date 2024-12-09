@@ -1,12 +1,13 @@
-import {axios} from '../utils/request'
-import {ARTICLE_MODULE} from './_prefix'
+import { axios } from '../utils/request'
+import { ARTICLE_MODULE } from './_prefix'
 
 type AddInfo = {
     title: string,
     author: string,
-    content: any, 
+    content: any,
     abstracts: string,
     eventId: number, // 示例 EventId，可根据实际需求动态获取
+    mainImage: string,
     images: string[], // 图片 URL 列表
 }
 
@@ -14,9 +15,10 @@ type UpdateInfo = {
     id: number,
     title: string,
     author: string,
-    content: any, 
+    content: any,
     abstracts: string,
     eventId: number, // 示例 EventId，可根据实际需求动态获取
+    mainImage: string,
     images: string[], // 图片 URL 列表
 }
 // 如果有“Vue: This may be converted to an async function”警告，可以不管
@@ -26,7 +28,7 @@ type UpdateInfo = {
 export const addArticle = (addInfo: AddInfo) => {
     console.log(addInfo)
     return axios.post(`${ARTICLE_MODULE}/add`, addInfo,
-        {headers: {'Content-Type': 'application/json'}})
+        { headers: { 'Content-Type': 'application/json' } })
         .then(res => {
             return res
         })
@@ -34,7 +36,7 @@ export const addArticle = (addInfo: AddInfo) => {
 
 export const updateArticle = (updateInfo: UpdateInfo) => {
     return axios.post(`${ARTICLE_MODULE}/update`, updateInfo,
-        {headers: {'Content-Type': 'application/json'}})
+        { headers: { 'Content-Type': 'application/json' } })
         .then(res => {
             return res
         })

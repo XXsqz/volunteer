@@ -14,7 +14,7 @@
 
         <main>
             <li v-for="item in items">
-                {{ item.title }}
+                <ArticleCard :article=item />
             </li>
         </main>
 
@@ -27,12 +27,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { getAllArticle } from '../../api/article';
+import ArticleCard from "../../components/ArticleCard.vue";
 var items = ref([])
 
 getAllArticle().then(res => {
     if (res.data.code === '000') {
         items.value = res.data.result;
         console.log(items)
+        console.log(items.value[0].mainImage)
     }
 });
 </script>
@@ -102,5 +104,9 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
+}
+
+li {
+    list-style: none
 }
 </style>
