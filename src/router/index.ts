@@ -41,7 +41,7 @@ const router = createRouter({
                 meta: {title: '主页'}
             },
             {
-                path: '/volunteerDetail',
+                path: '/volunteerDetail/:id',
                 name: 'volunteerDetail',
                 component: () => import('../views/Home/volunteerDetail.vue'),
                 meta: {title: '详细页面'}
