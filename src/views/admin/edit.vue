@@ -1,15 +1,15 @@
 <template>
     <div class="smart-contract-platform">
-      <div class="content">
+      <div class="sidebar">
         <aside>   
             <nav>
                 <ul>
-                    <li :class="{ active: activeMenu === 'home' }" @click="setActiveMenu('home')">主页</li>
-                    <li :class="{ active: activeMenu === 'new-project' }" @click="setActiveMenu('new-project')">新建项目</li>
-                    <li :class="{ active: activeMenu === 'new-article' }" @click="setActiveMenu('new-article')">新建文章</li>
-                    <li :class="{ active: activeMenu === 'view-project' }" @click="setActiveMenu('view-project')">查看项目</li>
-                    <li :class="{ active: activeMenu === 'view-article' }" @click="setActiveMenu('view-article')">查看文章</li>
-                    <li :class="{ active: activeMenu === 'drafts' }" @click="setActiveMenu('drafts')">草稿箱</li>
+                    <li :class="{ active: activeMenu === 'home','custom-font': true }" @click="setActiveMenu('home')">主页</li>
+                    <li :class="{ active: activeMenu === 'new-project' ,'custom-font': true}" @click="setActiveMenu('new-project')">新建项目</li>
+                    <li :class="{ active: activeMenu === 'new-article' ,'custom-font': true}" @click="setActiveMenu('new-article')">新建文章</li>
+                    <li :class="{ active: activeMenu === 'view-project','custom-font': true }" @click="setActiveMenu('view-project')">查看项目</li>
+                    <li :class="{ active: activeMenu === 'view-article','custom-font': true }" @click="setActiveMenu('view-article')">查看文章</li>
+                    <li :class="{ active: activeMenu === 'drafts' ,'custom-font': true}" @click="setActiveMenu('drafts')">草稿箱</li>
                 </ul>
             </nav>
         </aside>
@@ -347,7 +347,6 @@ const resetSearch = () => {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: white; /* 设置背景颜色为白色 */
 }
   
 header {
@@ -358,6 +357,13 @@ header {
     background-color: #f5f5f5;
 }
   
+.custom-font {
+    font-size: large;
+    font-weight:lighter;
+    cursor:grab;
+    font-family: fantasy;
+    color: #000;
+}
 header h1 {
     margin: 0;
     font-size: 24px;
@@ -367,20 +373,24 @@ header h1 {
     margin-left: 10px;
 }
   
-.content {
+.sidebar {
     display: flex;
     flex: 1;
+    
 }
   
 aside {
     width: 12%;
-    background-color: #2c3e50;
-    color: #ecf0f1;
+    background-color: #f8f8f9;
+    color: white;
+    font-family: fantasy;
+    
 }
   
 aside nav ul {
     list-style: none;
     padding: 0;
+    
 }
   
 aside nav ul li {
@@ -389,14 +399,18 @@ aside nav ul li {
 }
   
 aside nav ul li.active {
-    background-color: #34495e;
+    background-color: #86b7e8;
+}
+
+aside nav ul li:hover {
+    background-color: #c2dcf7;
 }
   
 main {
     width: 88%;
     flex-grow: 1;
     padding: 20px;
-    background-color: white; /* 设置背景颜色为白色 */
+    background-color: #f8f8fa; /* 设置背景颜色为白色 */
 }
   
 .search-bar {
@@ -466,7 +480,7 @@ table th, table td {
 }
   
 table thead th {
-    background-color: #34495e;
+    background-color: #0bade7;
     color: #ecf0f1;
 }
   
