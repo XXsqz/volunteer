@@ -211,9 +211,11 @@ const deleteevent = (id: number) => {
 };
 const handleArticleSubmitted = () => {
   if_edit_article.value = false;
+  handleArticle();
 };
 const handleEventSubmitted = () => {
   if_edit_event.value = false;
+  handleEvent();
 };
 // const filteredComponents = computed(() => {
 //     return components.value.filter(component => 
