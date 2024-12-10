@@ -233,7 +233,10 @@ function handleRegister() {
 }
 
 .bgimage {
-  background-image: url("../../assets/shopping-1s-1084px.svg");
+  background-image: url("../../assets/backG.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .error-warn {
