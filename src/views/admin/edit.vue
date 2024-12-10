@@ -209,7 +209,7 @@ const feedback = () => {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: white; /* 设置背景颜色为白色 */
+    background-color: gray; /* 设置背景颜色为白色 */
 }
   
 header {
@@ -236,8 +236,8 @@ header h1 {
   
 aside {
     width: 12%;
-    background-color: #2c3e50;
-    color: #ecf0f1;
+    background-color: #7d84ab;
+    color: white;
 }
   
 aside nav ul {
@@ -258,7 +258,7 @@ main {
     width: 88%;
     flex-grow: 1;
     padding: 20px;
-    background-color: white; /* 设置背景颜色为白色 */
+    background-color: #f8f8fa; /* 设置背景颜色为白色 */
 }
   
 .search-bar {
