@@ -4,7 +4,7 @@ import NewProject from '../components/Editor.vue'; // 导入新组件
 import { addEvent, updateEvent } from '../api/event';
 import { defineProps, defineEmits } from 'vue';
 import { getEvent } from '../api/event';
-import { parseTime } from '../utils/index';
+import { parseCategory, parseTime } from '../utils/index';
 const props = defineProps<{
   param1: number;
 }>();
@@ -110,7 +110,7 @@ const validateForm = () => {
         <label for="type"><span class="required">*</span> 项目类型</label>
         <select id="type" v-model="form.type" required>
           <option value="">请选择</option>
-          <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
+          <option v-for="category in categories" :key="category" :value="category">{{ parseCategory(category) }}</option>
         </select>
       </div>
       <div class="form-field">
