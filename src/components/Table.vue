@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import NewProject from '../components/Editor.vue'; // 导入新组件
-import { addEvent } from '../api/event';
-
+import { addEvent, updateEvent } from '../api/event';
+import { defineProps, defineEmits } from 'vue';
+import { getEvent } from '../api/event';
+import { parseTime } from '../utils/index';
+const props = defineProps<{
+  param1: number;
+}>();
+const emits = defineEmits(['submitted']);
 const form = ref({
   name: '',
-  eventStartTime: new Date,
-  eventEndTime: new Date,
-  enrollStartTime: new Date,
-  enrollEndTime: new Date,
+  eventStartTime: '',
+  eventEndTime: '',
+  enrollStartTime: '',
+  enrollEndTime: '',
   recruitNumber: 0,
   location: '',
   type: '',
@@ -17,12 +23,13 @@ const form = ref({
 });
 const categories = ['MEDICAL', 'CLEANUP', 'EXPLAIN', 'LAYOUT', 'GUIDE', 'TEACHING'];
 function submitForm() {
+  if (!props.param1) {
     addEvent({
       name: form.value.name,
-      eventStartTime: form.value.eventStartTime,
-      eventEndTime: form.value.eventEndTime,
-      enrollStartTime: form.value.enrollStartTime,
-      enrollEndTime: form.value.enrollEndTime,
+      eventStartTime: new Date(form.value.eventStartTime),
+      eventEndTime: new Date(form.value.eventEndTime),
+      enrollStartTime: new Date(form.value.enrollStartTime),
+      enrollEndTime: new Date(form.value.enrollEndTime),
       recruitNumber: form.value.recruitNumber,
       location: form.value.location,
       type: form.value.type,
@@ -37,8 +44,50 @@ function submitForm() {
         alert("提交失败，请稍后重试！");
       }
     });
+  }
+  else {
+    updateEvent({
+      id: props.param1,
+      name: form.value.name,
+      eventStartTime: new Date(form.value.eventStartTime),
+      eventEndTime: new Date(form.value.eventEndTime),
+      enrollStartTime: new Date(form.value.enrollStartTime),
+      enrollEndTime: new Date(form.value.enrollEndTime),
+      recruitNumber: form.value.recruitNumber,
+      location: form.value.location,
+      type: form.value.type,
+      contactPeople: form.value.contactPeople,
+      contactPhone: form.value.contactPhone,
+    }).then(res => {
+      if (res.data.code === '000') {
+        console.log("项目更新成功:", res);
+        alert("项目更新成功！");
+        emits('submitted');
+      }
+      else if (res.data.code === '400') {
+        alert("更新失败，请稍后重试！");
+      }
+    });
+  }
 }
-
+// console.log("param1", props.param1);
+if(props.param1 != 0){
+  getEvent(props.param1).then(res => {
+    if (res.data.code === '000') {
+      //console.log("项目获取成功:", res);
+      form.value = res.data.result;
+      //console.log("form", form.value);
+      form.value.enrollStartTime = new Date(form.value.enrollStartTime).toISOString().split('T')[0];
+      form.value.enrollEndTime = new Date(form.value.enrollEndTime).toISOString().split('T')[0];
+      form.value.eventStartTime = new Date(form.value.eventStartTime).toISOString().split('T')[0];
+      form.value.eventEndTime = new Date(form.value.eventEndTime).toISOString().split('T')[0];
+      //console.log("form", form.value);
+    }
+    else if (res.data.code === '400') {
+      alert("获取失败，请稍后重试！");
+    }
+  });
+}
 const validateForm = () => {
   let isValid = true;
   if (!form.value.name||!form.value.type||!form.value.location||!form.value.contactPeople||
@@ -72,21 +121,21 @@ const validateForm = () => {
     <div class="form-row-2">
       <div class="form-field">
         <label for="eventStartTime"><span class="required">*</span> 项目开始时间</label>
-        <input type="date" id="eventStartTime" v-model="form.eventStartTime" :max="form.eventEndTime" required />
+        <input type="date" id="eventStartTime" v-model="form.eventStartTime" :max="form.eventEndTime" required style="width: 350px;"/>
       </div>
       <div class="form-field">
         <label for="eventEndTime"><span class="required">*</span> 项目结束时间</label>
-        <input type="date" id="eventEndTime" v-model="form.eventEndTime" :min="form.eventStartTime" required />
+        <input type="date" id="eventEndTime" v-model="form.eventEndTime" :min="form.eventStartTime" required style="width: 350px;"/>
       </div>
     </div>
     <div class="form-row-2">
       <div class="form-field">
         <label for="enrollStartTime"><span class="required">*</span> 报名开始时间</label>
-        <input type="date" id="enrollStartTime" v-model="form.enrollStartTime" :max="form.enrollEndTime" required />
+        <input type="date" id="enrollStartTime" v-model="form.enrollStartTime" :max="form.enrollEndTime" required style="width: 350px;"/>
       </div>
       <div class="form-field">
         <label for="enrollEndTime"><span class="required">*</span> 报名结束时间</label>
-        <input type="date" id="enrollEndTime" v-model="form.enrollEndTime" :min="form.enrollStartTime" required />
+        <input type="date" id="enrollEndTime" v-model="form.enrollEndTime" :min="form.enrollStartTime" required style="width: 350px;"/>
         
       </div>
     </div>
@@ -114,8 +163,8 @@ const validateForm = () => {
 
 <style scoped>
 .form-container {
-  width: 98%;
-  margin: 0 auto;
+  width: 80%;
+  margin: 0;
   padding: 20px;
   background-color: white;
   border-radius: 8px;

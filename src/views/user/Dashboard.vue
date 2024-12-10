@@ -132,7 +132,6 @@ function updatePassword() {
     studentId: newStudentId.value
   }).then(res => {
     if (res.data.code === '000') {
-      
       if(password.value!=''){
         ElMessageBox.alert(
           `请重新登录`,

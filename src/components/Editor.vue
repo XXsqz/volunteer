@@ -27,15 +27,15 @@ const editorRef = ref(null);
 
 const submitArticle = async () => {
   // console.log("json", JSON.stringify(content.value));
-  console.log("提交文章");
+  //console.log("提交文章");
   try {
     const quill = editorRef.value.getQuill(); // 获取 Quill 实例
     //const editorHTML = quill.root.innerHTML; // 获取编辑器的 HTML 内容
     const editorContent = quill.getContents();
     const editorText = quill.getText(0, 20);
-    console.log(eventId.value);
-    console.log(editorContent);
-    console.log(JSON.stringify(editorContent));
+    // console.log(eventId.value);
+    // console.log(editorContent);
+    // console.log(JSON.stringify(editorContent));
     if(props.param1 === 0){
       addArticle({
         title: title.value,
@@ -58,7 +58,6 @@ const submitArticle = async () => {
       });
     }
     else{
-      console.log("编辑文章");
       updateArticle({
         id: props.param1,
         title: title.value,
@@ -114,7 +113,7 @@ const imageHandler = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const imageUrl = response.data; // 上传返回的图片 URL
-      console.log("图片上传:", imageUrl);
+      //console.log("图片上传:", imageUrl);
       images.value.push(imageUrl); // 保存图片 URL
       const range = editorRef.value.getQuill().getSelection();
       editorRef.value.getQuill().insertEmbed(range.index, "image", imageUrl); // 插入图片
@@ -130,9 +129,9 @@ function handleReplace() {
     events.value = res.data.result;
   });
   if(props.param1){
-    console.log("编辑文章");
+    //console.log("编辑文章");
     getArticle(Number(props.param1)).then(res => {
-      console.log("获取文章成功:", res);
+      //console.log("获取文章成功:", res);
       title.value = res.data.result.title;
       author.value = res.data.result.author;
       eventId.value = res.data.result.eventId;

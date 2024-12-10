@@ -13,7 +13,7 @@
                 </ul>
             </nav>
         </aside>
-        <main v-if="activeMenu === 'view-project'">
+        <main v-if="activeMenu === 'view-project'&& if_edit_event=== false">
           <div class="search-bar">
             <input type="text" placeholder="Please enter the name or ID" v-model="searchQuery" maxlength="20" />
             <button class="actions-button" @click="search">筛选</button>
@@ -36,11 +36,15 @@
               <tr v-for="event in events" :key="event.id">
                 <td>{{ event.id }}</td>
                 <td>{{ event.name }}</td>
-                <td>{{ event.createdBy }}</td>
-                <td>{{ event.introduction }}</td>
-                <td>{{ event.scope }}</td>
-                <td>{{ event.scene }}</td>
-                <td>{{ event.lastModifiedTime }}</td>
+                <td>{{ event.contactPeople }}</td>
+                <td>{{ event.location }}</td>
+                <td>{{ event.type }}</td>
+                <td>{{ event.isFinished ? '已结束' : '未结束' }}</td>
+                <td>{{ parseTime(event.updateTime) }}</td>
+                <td>
+                    <button class="edit-button" @click="editevent(event.id)">修改</button>
+                    <button class="delete-button" @click="deleteevent(event.id)">删除</button>
+                </td>
                 <!-- <td><button class="export-button" @click="exportevent(event.id)">Export</button></td> -->
               </tr>
             </tbody>
@@ -49,7 +53,10 @@
             <!-- Pagination controls go here -->
           </div>
         </main>
-        <main v-if="activeMenu === 'view-article'&& if_edit=== false">
+        <main v-if="activeMenu === 'view-project'&& if_edit_event=== true">
+            <NewTable :param1="editid_event" @submitted="handleEventSubmitted"/>
+        </main>
+        <main v-if="activeMenu === 'view-article'&& if_edit_article=== false">
             <!-- <el-button id="parentIframe"  @click.prevent="handleArticle()" 
                 type="primary" style="display: none">
             </el-button> -->
@@ -87,8 +94,8 @@
             <!-- Pagination controls go here -->
           </div>
         </main>
-        <main v-if="activeMenu === 'view-article'&& if_edit=== true">
-            <NewProject :param1="editid" @submitted="handleSubmitted"/>
+        <main v-if="activeMenu === 'view-article'&& if_edit_article=== true">
+            <NewProject :param1="editid_article" @submitted="handleArticleSubmitted"/>
         </main>
         <main v-if="activeMenu === 'new-project'">
             <!-- <NewProject /> -->
@@ -115,10 +122,11 @@ import { ref, computed, watch } from 'vue';
 import NewProject from '../../components/Editor.vue'; // 导入新组件
 import NewTable from '../../components/Table.vue'; // 导入新组件
 import { adminGetArticle } from '../../api/article';
-import { getEvent } from '../../api/event';
+import { getEvent,adminGetEvent } from '../../api/event';
+import { parseTime } from '../../utils/index';
 const searchQuery = ref('');
 const events = ref([
-    { id: 1, name: 'Health Record Management', createdBy: 'Lucy', introduction: 'Provides Basic Patient Information Management Functionality', scope: 'Healthcare Sector', scene: 'Offline Hospital Scenario', lastModifiedTime: '2024/2/29 20:58:14' },
+    { id: 1, name: 'Health Record Management', contactPeople: 'Lucy', location: 'Room 101', type: 'Health', isFinished: 'No', updateTime: '2021-10-01' },
     // Add other components here...
 ]);
 const articles = ref([
@@ -133,7 +141,7 @@ function handleArticle(){
             for(const article of articles.value){
                 getEvent(article.eventId).then(res => {
                     if (res.data.code === '000') {
-                        console.log("获取文章成功:", res);
+                        //console.log("获取文章成功:", res);
                         article.eventName = res.data.result.name;
                     }
                     else if (res.data.code === '400') {
@@ -147,31 +155,65 @@ function handleArticle(){
         }
     });
 }
-
-
-
-
+function handleEvent(){
+    adminGetEvent().then(res => {
+        if (res.data.code === '000') {
+            //console.log("获取成功:", res);
+            events.value = res.data.result;
+            // for(const event of events.value){
+            //     getEvent(event.eventId).then(res => {
+            //         if (res.data.code === '000') {
+            //             console.log("获取文章成功:", res);
+            //             article.eventName = res.data.result.name;
+            //         }
+            //         else if (res.data.code === '400') {
+            //             alert("获取文章失败，请稍后重试！");
+            //         }
+            //     });
+            // }
+        }
+        else if (res.data.code === '400') {
+            alert("获取文章失败，请稍后重试！");
+        }
+    });
+}
 
 const activeMenu = ref(localStorage.getItem('activeMenu') || 'home');
 if(activeMenu.value === 'view-article')handleArticle();
+if(activeMenu.value === 'view-project')handleEvent();
 watch(activeMenu, (newValue) => {
   localStorage.setItem('activeMenu', newValue);
 });
-const if_edit = ref(false);
+const if_edit_article = ref(false);
+const if_edit_event = ref(false);
 const setActiveMenu = (menu: string) => {
     activeMenu.value = menu;
-    if(menu === 'view-article'){
-        handleArticle();
-    }
+    if(menu === 'view-article')handleArticle();
+    if(menu === 'view-project')handleEvent();
 };
-const editid = ref(0);
+const editid_article = ref(0);
+const editid_event= ref(0);
 const editarticle = (id: number) => {
-    if_edit.value = true;
-    editid.value = id;
+    if_edit_article.value = true;
+    editid_article .value = id;
     console.log("编辑文章",id);
 };
-const handleSubmitted = () => {
-  if_edit.value = false;
+const deletearticle = (id: number) => {
+    console.log("删除文章",id);
+};
+const editevent = (id: number) => {
+    if_edit_event.value = true;
+    editid_event.value = id;
+    console.log("编辑项目",id);
+};
+const deleteevent = (id: number) => {
+    console.log("删除项目",id);
+};
+const handleArticleSubmitted = () => {
+  if_edit_article.value = false;
+};
+const handleEventSubmitted = () => {
+  if_edit_event.value = false;
 };
 // const filteredComponents = computed(() => {
 //     return components.value.filter(component => 
@@ -181,21 +223,8 @@ const handleSubmitted = () => {
 const search = () => {
     // Search functionality
 };
-  
 const resetSearch = () => {
     searchQuery.value = '';
-};
-
-const bulkDelete = () => {
-    // Bulk delete functionality
-};
-  
-const exportComponent = (id: number) => {
-    // Export event functionality
-};
-  
-const feedback = () => {
-    // Feedback functionality
 };
 // setTimeout(function() {
 // 	if(document) {

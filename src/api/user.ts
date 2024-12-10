@@ -23,7 +23,7 @@ type UpdateInfo = {
 // 如果有“Vue: This may be converted to an async function”警告，可以不管
 // 用户登录
 export const userLogin = (loginInfo: LoginInfo) => {
-    //console.log(loginInfo)
+    
     return axios.post(`${USER_MODULE}/login`, null, {params: loginInfo})
         .then(res => {
             return res
@@ -50,7 +50,7 @@ export const userInfo = () => {
 
 // 更新用户信息
 export const userInfoUpdate = (updateInfo: UpdateInfo) => {
-    //console.log(updateInfo)
+    
     return axios.post(`${USER_MODULE}/update`, updateInfo, 
         {headers: {'Content-Type': 'application/json'}})
         .then(res => {

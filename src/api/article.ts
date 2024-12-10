@@ -26,7 +26,6 @@ type UpdateInfo = {
 
 // 新建文章
 export const addArticle = (addInfo: AddInfo) => {
-    console.log(addInfo)
     return axios.post(`${ARTICLE_MODULE}/add`, addInfo,
         { headers: { 'Content-Type': 'application/json' } })
         .then(res => {

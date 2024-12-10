@@ -61,7 +61,7 @@ export default {
             headers: { "Content-Type": "multipart/form-data" },
           });
           const imageUrl = response.data; // 上传返回的图片 URL
-          console.log("图片上传:", imageUrl);
+          //console.log("图片上传:", imageUrl);
           this.images.push(imageUrl); // 保存图片 URL
           const range = this.$refs.editor.getQuill().getSelection(); // 获取光标位置
           this.$refs.editor.getQuill().insertEmbed(range.index, "image", imageUrl); // 插入图片
@@ -76,8 +76,8 @@ export default {
   },
     // 提交文章
     async submitArticle() {
-      console.log("json",JSON.stringify(this.content));
-      console.log("提交文章");  
+      // console.log("json",JSON.stringify(this.content));
+      // console.log("提交文章");  
       try {
         const quill = this.$refs.editor.getQuill(); // 获取 Quill 实例
         //console.log(quill)
@@ -85,8 +85,8 @@ export default {
         // 获取编辑器的 Delta 对象
         const editorContent = quill.getContents();
         const editorText = quill.getText(0,50);
-        console.log(editorContent)
-        console.log(JSON.stringify(editorContent))
+        // console.log(editorContent)
+        // console.log(JSON.stringify(editorContent))
         addArticle({
           title: this.title,
           author: this.author,

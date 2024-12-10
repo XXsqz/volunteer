@@ -14,6 +14,19 @@ type AddInfo = {
     contactPhone: string,
 }
 
+type UpdateInfo = {
+    id: number,
+    name: string,
+    eventStartTime: Date,
+    eventEndTime: Date,
+    enrollStartTime: Date,
+    enrollEndTime: Date,
+    recruitNumber: number,
+    location: string,
+    type: string,
+    contactPeople: string,
+    contactPhone: string,
+}
 // 如果有“Vue: This may be converted to an async function”警告，可以不管
 
 
@@ -26,8 +39,8 @@ export const addEvent = (addInfo: AddInfo) => {
         })
 }
 
-export const updateEvent = (addInfo: AddInfo) => {
-    return axios.post(`${EVENT_MODULE}/update`, addInfo,
+export const updateEvent = (updateInfo: UpdateInfo) => {
+    return axios.post(`${EVENT_MODULE}/update`, updateInfo,
         {headers: {'Content-Type': 'application/json'}})
         .then(res => {
             return res
@@ -50,6 +63,13 @@ export const getAllEvent = () => {
 
 export const getEvent = (eventId: number) => {
     return axios.get(`${EVENT_MODULE}/get/${eventId}`)
+        .then(res => {
+            return res
+        })
+}
+
+export const adminGetEvent = () => {
+    return axios.get(`${EVENT_MODULE}/getMine`)
         .then(res => {
             return res
         })
