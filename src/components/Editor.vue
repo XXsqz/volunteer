@@ -25,7 +25,7 @@ const content = ref("");
 const images = ref<string[]>([]); // 用于存储图片的 URL 列表
 const editorRef = ref(null);
 
-function submitArticle(flag: boolean) {
+const submitArticle = async () => {
   // console.log("json", JSON.stringify(content.value));
   //console.log("提交文章");
   try {
@@ -45,7 +45,6 @@ function submitArticle(flag: boolean) {
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
         mainImage: images.value[0], // 主图 URL
         images: images.value, // 图片 URL 列表
-        isDraft: flag,
       }).then(res => {
         if (res.data.code === '000') {
           console.log("文章保存成功:", res);
@@ -68,7 +67,6 @@ function submitArticle(flag: boolean) {
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
         mainImage: "", // 主图 URL
         images: images.value, // 图片 URL 列表
-        isDraft: flag,
       }).then(res => {
         if (res.data.code === '000') {
           console.log("文章保存成功:", res);
@@ -155,7 +153,7 @@ setTimeout(function() {
     <input type="text" v-model="author" placeholder="请输入作者名称" class="author-input" />
     <select id="event" v-model="eventId" required class="event-selection" >
       <option value="0">请选择项目名称</option>
-      <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
+      <option v-for="event in events" :key="event" :value="event.id">{{ event.name }}</option>
     </select>
     <QuillEditor
       theme="snow"
@@ -167,10 +165,7 @@ setTimeout(function() {
     <el-button id="parentIframe"  @click.prevent="handleReplace()" 
               type="primary" style="display: none">
        </el-button>
-    <div style="display: flex;">
-      <button @click="submitArticle(true)" style="margin-right: 10px;">保存为草稿</button>
-      <button @click="submitArticle(false)">保存文章</button>
-    </div>
+    <button @click="submitArticle">保存文章</button>
   </div>
 </template>
 
