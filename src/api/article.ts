@@ -9,6 +9,7 @@ type AddInfo = {
     eventId: number, // 示例 EventId，可根据实际需求动态获取
     mainImage: string,
     images: string[], // 图片 URL 列表
+    isDraft: boolean
 }
 
 type UpdateInfo = {
@@ -20,6 +21,7 @@ type UpdateInfo = {
     eventId: number, // 示例 EventId，可根据实际需求动态获取
     mainImage: string,
     images: string[], // 图片 URL 列表
+    isDraft: boolean
 }
 // 如果有“Vue: This may be converted to an async function”警告，可以不管
 

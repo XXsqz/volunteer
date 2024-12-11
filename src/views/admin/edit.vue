@@ -144,7 +144,7 @@
             <NewProject :param1="0"/>
             <!-- <NewTable /> -->
         </main>
-        <main v-if="activeMenu === 'drafts'">
+        <main v-if="activeMenu === 'drafts'&& if_edit_draft=== false">
           <div class="top">
             <el-form ref="filter_draft" label-width="120px" class="input-form" status-icon>
               <el-form-item label="草稿名称/Id" prop="name">
@@ -158,7 +158,7 @@
               </el-form-item>
             </el-form>
             <div class="btns">
-              <el-button type="primary" @click="search_article"> 筛选 </el-button>
+              <el-button type="primary" @click="search_drafts"> 筛选 </el-button>
               <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
             </div>
           </div>
@@ -174,7 +174,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="draft in articles" :key="draft.id">
+              <tr v-for="draft in filtered_drafts" :key="draft.id">
                 <td>{{ draft.id }}</td>
                 <td>{{ draft.title }}</td>
                 <td>{{ draft.author }}</td>
@@ -279,7 +279,8 @@ function handleEvent(){
 function handleDraft(){
     adminGetDraft().then(res => {
         if (res.data.code === '000') {
-            drafts.value = res.data.result||[];
+            console.log("获取文章成功:", res);
+            drafts.value = res.data.result;
             for(const draft of drafts.value){
               if(draft.eventId !== 0){
                 getEvent(draft.eventId).then(res => {
