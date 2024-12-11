@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref,computed} from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
@@ -14,8 +14,8 @@ const emits = defineEmits(['submitted']);
 
 const title = ref("");
 const author = ref("");
-const event = ref("");
 const eventId = ref(0);
+const userId = ref(0);
 interface Event{
   id: number;
   name: string;
@@ -24,18 +24,16 @@ const events = ref<Event[]>([]);
 const content = ref("");
 const images = ref<string[]>([]); // 用于存储图片的 URL 列表
 const editorRef = ref(null);
+const isFormValid = computed(() => {
+  console.log("content:",content.value);
+  return title.value.trim() !== "" && author.value.trim() !== "" && eventId.value !== 0 && content.value !== "";
+});
 
-const submitArticle = async () => {
-  // console.log("json", JSON.stringify(content.value));
-  //console.log("提交文章");
+function submitArticle(flag: boolean) {
   try {
     const quill = editorRef.value.getQuill(); // 获取 Quill 实例
-    //const editorHTML = quill.root.innerHTML; // 获取编辑器的 HTML 内容
     const editorContent = quill.getContents();
     const editorText = quill.getText(0, 20);
-    // console.log(eventId.value);
-    // console.log(editorContent);
-    // console.log(JSON.stringify(editorContent));
     if(props.param1 === 0){
       addArticle({
         title: title.value,
@@ -45,6 +43,7 @@ const submitArticle = async () => {
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
         mainImage: images.value[0], // 主图 URL
         images: images.value, // 图片 URL 列表
+        isDraft: flag,
       }).then(res => {
         if (res.data.code === '000') {
           console.log("文章保存成功:", res);
@@ -60,6 +59,7 @@ const submitArticle = async () => {
     else{
       updateArticle({
         id: props.param1,
+        userId: userId.value,
         title: title.value,
         author: author.value,
         content: JSON.stringify(editorContent),
@@ -67,6 +67,7 @@ const submitArticle = async () => {
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
         mainImage: "", // 主图 URL
         images: images.value, // 图片 URL 列表
+        isDraft: flag,
       }).then(res => {
         if (res.data.code === '000') {
           console.log("文章保存成功:", res);
@@ -135,6 +136,7 @@ function handleReplace() {
       title.value = res.data.result.title;
       author.value = res.data.result.author;
       eventId.value = res.data.result.eventId;
+      userId.value = res.data.result.userId;
       //content.value = res.data.result.content;
       editorRef.value.getQuill().setContents(JSON.parse(res.data.result.content));
     });
@@ -153,7 +155,7 @@ setTimeout(function() {
     <input type="text" v-model="author" placeholder="请输入作者名称" class="author-input" />
     <select id="event" v-model="eventId" required class="event-selection" >
       <option value="0">请选择项目名称</option>
-      <option v-for="event in events" :key="event" :value="event.id">{{ event.name }}</option>
+      <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
     </select>
     <QuillEditor
       theme="snow"
@@ -165,7 +167,15 @@ setTimeout(function() {
     <el-button id="parentIframe"  @click.prevent="handleReplace()" 
               type="primary" style="display: none">
        </el-button>
-    <button @click="submitArticle">保存文章</button>
+    <div style="display: flex;">
+      <button @click="submitArticle(true)" style="margin-right: 10px;">保存为草稿</button>
+      <button 
+        @click="submitArticle(false)" 
+        :disabled="!isFormValid" 
+        :class="{ 'disabled-button': !isFormValid }">
+        保存文章
+      </button>
+    </div>
   </div>
 </template>
 
@@ -200,5 +210,10 @@ button {
 
 button:hover {
   background-color: #2980b9;
+}
+
+button.disabled-button {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 </style>

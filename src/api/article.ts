@@ -14,6 +14,7 @@ type AddInfo = {
 
 type UpdateInfo = {
     id: number,
+    userId: number,
     title: string,
     author: string,
     content: any,
