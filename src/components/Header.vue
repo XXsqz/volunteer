@@ -72,11 +72,12 @@ function logout() {
 }
 
 .header-text {
-  color:blue;
-  font-size: x-large;
+  color:rgb(50, 134, 231);
+  font-size: 30px;
   min-width: max-content;
   margin-top: 15px;
   margin-bottom: 15px;
+  font-family: 'Comic Sans MS', sans-serif;
 }
 
 .header-icon {

@@ -1,21 +1,13 @@
 <template>
     <div class="homepage">
-        <header>
-            <h1>欢迎来到志愿者网站</h1>
-            <nav>
-                <ul>
-                    <li><router-link to="/">主页</router-link></li>
-                    <li><router-link to="/about">关于我们</router-link></li>
-                    <li><router-link to="/events">活动</router-link></li>
-                    <li><router-link to="/contact">联系我们</router-link></li>
-                </ul>
-            </nav>
-        </header>
+        <img class="title_img" :src="'https://s3-us-west-2.amazonaws.com/s.cdpn.io/25480/hero-img.jpg'" />
 
-        <main>
-            <li v-for="item in items">
-                <ArticleCard :article=item />
-            </li>
+        <main style="">
+            <ul style="display: grid; justify-content: center;">
+                <li v-for="item in items">
+                    <ArticleCard :article=item />
+                </li>
+            </ul>
         </main>
 
         <footer>
@@ -55,11 +47,13 @@ header h1 {
 }
 
 nav ul {
+    align-items: center;
     list-style: none;
     padding: 0;
 }
 
 nav ul li {
+    align-items: center;
     display: inline;
     margin-right: 10px;
 }
@@ -104,6 +98,10 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
+}
+
+.title_img {
+    width: 100%;
 }
 
 li {

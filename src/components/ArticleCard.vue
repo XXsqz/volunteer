@@ -31,9 +31,24 @@ export default {
 .article-card {
     display: flex;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 10px;
+    border-radius: 10px;
+    margin: 15px;
     padding: 10px;
+    width: 1000px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.article-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.article-card:active {
+    transform: scale(0.95);
 }
 
 .image-container {
@@ -47,16 +62,21 @@ export default {
 }
 
 .content {
-    flex: 6;
+    flex: 7;
     padding: 0 10px;
 }
 
 .title {
-    font-size: 18px;
+    margin: 5px 10px;
+    font-size: 25px;
     font-weight: bold;
+    font-family: 'Arial', sans-serif;
 }
 
 .abstract {
+    margin: 10px 10px;
     margin-top: 10px;
+    color: #777;
+    /* 设置为灰色 */
 }
 </style>
