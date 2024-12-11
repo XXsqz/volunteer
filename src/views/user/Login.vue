@@ -38,7 +38,7 @@ function handleLogin() {
       })
       const token = res.data.result
       sessionStorage.setItem('token', token)
-
+      localStorage.removeItem('activeMenu')
       userInfo().then(res => {
         sessionStorage.setItem('name', res.data.result.name)
         sessionStorage.setItem('role', res.data.result.role)

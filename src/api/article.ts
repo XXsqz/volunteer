@@ -68,3 +68,10 @@ export const adminGetArticle = () => {
             return res
         })
 }
+
+export const adminGetDraft = () => {
+    return axios.get(`${ARTICLE_MODULE}/getDrafts`)
+        .then(res => {
+            return res
+        })
+}

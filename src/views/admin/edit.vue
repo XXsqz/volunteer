@@ -90,21 +90,21 @@
             <NewTable :param1="editid_event" @submitted="handleEventSubmitted"/>
         </main>
         <main v-if="activeMenu === 'view-article'&& if_edit_article=== false">
-            <div class="top">
-          <el-form ref="filter_event" label-width="120px" class="input-form" status-icon>
-                <el-form-item label="文章名称/Id" prop="name">
-                    <el-input v-model="article_name" placeholder="请输入"/>
-                </el-form-item>
-                <el-form-item label="作者" prop="author">
-                    <el-input v-model="author_name" placeholder="请输入"/>
-                </el-form-item>
-                <el-form-item label="对应项目" prop="event">
-                    <el-input v-model="event_name" placeholder="请输入"/>
-                </el-form-item>
+          <div class="top">
+            <el-form ref="filter_article" label-width="120px" class="input-form" status-icon>
+              <el-form-item label="文章名称/Id" prop="name">
+                <el-input v-model="article_name" placeholder="请输入"/>
+              </el-form-item>
+              <el-form-item label="作者" prop="author">
+                <el-input v-model="author_name" placeholder="请输入"/>
+              </el-form-item>
+              <el-form-item label="对应项目" prop="event">
+                <el-input v-model="event_name" placeholder="请输入"/>
+              </el-form-item>
             </el-form>
             <div class="btns">
-                <el-button type="primary" @click="search_article"> 筛选 </el-button>
-                <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
+              <el-button type="primary" @click="search_article"> 筛选 </el-button>
+              <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
             </div>
           </div>
           <table>
@@ -132,9 +132,6 @@
               </tr>
             </tbody>
           </table>
-          <div class="pagination">
-            <!-- Pagination controls go here -->
-          </div>
         </main>
         <main v-if="activeMenu === 'view-article'&& if_edit_article=== true">
             <NewProject :param1="editid_article" @submitted="handleArticleSubmitted"/>
@@ -148,8 +145,51 @@
             <!-- <NewTable /> -->
         </main>
         <main v-if="activeMenu === 'drafts'">
-          <h1>Drafts</h1>
-          <p>Here you can view and manage your drafts.</p>
+          <div class="top">
+            <el-form ref="filter_draft" label-width="120px" class="input-form" status-icon>
+              <el-form-item label="草稿名称/Id" prop="name">
+                <el-input v-model="draft_name" placeholder="请输入"/>
+              </el-form-item>
+              <el-form-item label="草稿作者" prop="author">
+                <el-input v-model="draft_author" placeholder="请输入"/>
+              </el-form-item>
+              <el-form-item label="草稿对应项目" prop="event">
+                <el-input v-model="draft_event" placeholder="请输入"/>
+              </el-form-item>
+            </el-form>
+            <div class="btns">
+              <el-button type="primary" @click="search_article"> 筛选 </el-button>
+              <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>草稿名称</th>
+                <th>作者</th>
+                <th>草稿内容</th>
+                <th>草稿项目</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="draft in articles" :key="draft.id">
+                <td>{{ draft.id }}</td>
+                <td>{{ draft.title }}</td>
+                <td>{{ draft.author }}</td>
+                <td>{{ draft.abstracts }}...</td>
+                <td>{{ draft.eventName }}</td>
+                <td>
+                    <button class="edit-button" @click="editdraft(draft.id)">编辑</button>
+                    <button class="delete-button" @click="deletearticle(draft.id)">删除</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </main>
+        <main v-if="activeMenu === 'drafts'&& if_edit_draft=== true">
+            <NewProject :param1="editid_draft" @submitted="handledraftSubmitted"/>
         </main>
         <main v-if="activeMenu === 'home'">
           <h1>Home</h1>
@@ -163,17 +203,29 @@
 import { ref, computed, watch } from 'vue';
 import NewProject from '../../components/Editor.vue'; // 导入新组件
 import NewTable from '../../components/Table.vue'; // 导入新组件
-import { adminGetArticle } from '../../api/article';
+import { adminGetArticle,adminGetDraft} from '../../api/article';
 import { getEvent,adminGetEvent } from '../../api/event';
 import { parseTime } from '../../utils/index';
-const events = ref([
-    { id: 1, name: 'Health Record Management', contactPeople: 'Lucy', location: 'Room 101', type: 'Health', finished: 'No', updateTime: '2021-10-01' },
-    // Add other components here...
-]);
-const articles = ref([
-    { id: 1, title: 'Health Record Management', author: 'Lucy', abstracts: 'Provides Basic Patient Information Management Functionality', eventId: 1,eventName: 'Health Record Management' },
-    // Add other components here...
-]);
+interface Event{
+    id: number;
+    name: string;
+    contactPeople: string;
+    location: string;
+    type: string;
+    finished: string;
+    updateTime: string;
+}
+const events = ref<Event[]>([])
+interface Article{
+    id: number;
+    title: string;
+    author: string;
+    abstracts: string;
+    eventId: number;
+    eventName: string;
+}
+const articles = ref<Article[]>([])
+const drafts = ref<Article[]>([]);
 //event类
 const isCompleted = ref('null');
 const owner = ref('');
@@ -184,6 +236,10 @@ const address = ref('');
 const article_name = ref('');
 const event_name = ref('');
 const author_name = ref('');
+//draft类
+const draft_name = ref('');
+const draft_event = ref('');
+const draft_author = ref('');
 function handleArticle(){
     adminGetArticle().then(res => {
         if (res.data.code === '000') {
@@ -220,51 +276,85 @@ function handleEvent(){
         }
     });
 }
-
+function handleDraft(){
+    adminGetDraft().then(res => {
+        if (res.data.code === '000') {
+            drafts.value = res.data.result||[];
+            for(const draft of drafts.value){
+              if(draft.eventId !== 0){
+                getEvent(draft.eventId).then(res => {
+                    if (res.data.code === '000') {
+                        //console.log("获取文章成功:", res);
+                        draft.eventName = res.data.result.name;
+                    }
+                    else if (res.data.code === '400') {
+                        alert("获取项目失败，请稍后重试！");
+                    }
+                });
+              } 
+            }
+          filtered_drafts.value = drafts.value;
+        }
+        else if (res.data.code === '400') {
+            alert("获取文章失败，请稍后重试！");
+        }
+    });
+}
 const activeMenu = ref(localStorage.getItem('activeMenu') || 'home');
-if(activeMenu.value === 'view-article')handleArticle();
-if(activeMenu.value === 'view-project')handleEvent();
+origin();
+function origin(){
+  if(activeMenu.value === 'view-article')handleArticle();
+  if(activeMenu.value === 'view-project')handleEvent();
+  if(activeMenu.value === 'drafts')handleDraft();
+}
 watch(activeMenu, (newValue) => {
   localStorage.setItem('activeMenu', newValue);
 });
-const if_edit_article = ref(false);
-const if_edit_event = ref(false);
-const setActiveMenu = (menu: string) => {
+function setActiveMenu(menu: string){
     activeMenu.value = menu;
     if(menu === 'view-article')handleArticle();
     if(menu === 'view-project')handleEvent();
+    if(menu === 'drafts')handleDraft();
 };
+const if_edit_article = ref(false);
+const if_edit_event = ref(false);
+const if_edit_draft = ref(false);
 const editid_article = ref(0);
 const editid_event= ref(0);
-const editarticle = (id: number) => {
+const editid_draft= ref(0);
+function editarticle(id: number){
     if_edit_article.value = true;
     editid_article .value = id;
     console.log("编辑文章",id);
 };
-const deletearticle = (id: number) => {
+function deletearticle(id: number){
     console.log("删除文章",id);
 };
-const editevent = (id: number) => {
+function editevent(id: number){
     if_edit_event.value = true;
     editid_event.value = id;
     console.log("编辑项目",id);
 };
-const deleteevent = (id: number) => {
+function deleteevent(id: number){
     console.log("删除项目",id);
 };
-const handleArticleSubmitted = () => {
+function editdraft(id: number){
+    if_edit_draft.value = true;
+    editid_draft.value = id;
+    console.log("编辑草稿",id);
+};
+function handleArticleSubmitted(){
   if_edit_article.value = false;
   handleArticle();
 };
-const handleEventSubmitted = () => {
+function handleEventSubmitted(){
   if_edit_event.value = false;
   handleEvent();
 };
-// const filteredComponents = computed(() => {
-//     return components.value.filter(component => 
-//         component.name.includes(searchQuery.value) || component.createdBy.includes(searchQuery.value)
-//     );
-// });
+function handledraftSubmitted(){
+  if_edit_draft.value = false;
+  handleDraft();
+};
 const filtered_events = ref<typeof events.value>([]);
 function search_event(){
     filtered_events.value = events.value.filter(event => event.name.includes(searchQuery.value) 
@@ -289,10 +379,22 @@ function search_article(){
       || article.id.toString().includes(article_name.value)
     );
     if(event_name.value !== ''){
-      filtered_articles.value = articles.value.filter(article => article.eventName.includes(event_name.value));
+      filtered_articles.value = filtered_articles.value.filter(article => article.eventName.includes(event_name.value));
     }
     if(author_name.value !== ''){
-      filtered_articles.value = articles.value.filter(article => article.author.includes(author_name.value));
+      filtered_articles.value = filtered_articles.value.filter(article => article.author.includes(author_name.value));
+    }
+}
+const filtered_drafts = ref<typeof articles.value>([]);
+function search_drafts(){
+    filtered_drafts.value = drafts.value.filter(draft => draft.title.includes(draft_name.value) 
+      || draft.id.toString().includes(draft_name.value)
+    );
+    if(event_name.value !== ''){
+      filtered_drafts.value = filtered_drafts.value.filter(draft => draft.eventName.includes(draft_event.value));
+    }
+    if(author_name.value !== ''){
+      filtered_drafts.value = filtered_drafts.value.filter(draft => draft.author.includes(draft_author.value));
     }
 }
 const resetSearch = () => {
@@ -304,14 +406,14 @@ const resetSearch = () => {
     article_name.value = '';
     event_name.value = '';
     author_name.value = '';
+    draft_name.value = '';
+    draft_event.value = '';
+    draft_author.value = '';
     filtered_events.value = events.value;
     filtered_articles.value = articles.value;
+    filtered_drafts.value = drafts.value;
 };
-// setTimeout(function() {
-// 	if(document) {
-// 		document.getElementById("parentIframe").click();
-// 	}
-// }, 0);
+
 </script>
 
 <style scoped>
