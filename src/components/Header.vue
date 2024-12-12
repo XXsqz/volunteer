@@ -31,7 +31,7 @@ function logout() {
     <el-row :gutter="10" justify="space-between">
 
       <el-col :span="3" class="header-icon">
-        <router-link to="/allStore" v-slot="{navigate}" class="no-link">
+        <router-link to="/volunteer" v-slot="{navigate}" class="no-link">
           <h1 @click="navigate" class="header-text"> volunteer</h1>
         </router-link>
       </el-col>
