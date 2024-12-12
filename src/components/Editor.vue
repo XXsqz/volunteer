@@ -30,10 +30,14 @@ const isFormValid = computed(() => {
 });
 
 function submitArticle(flag: boolean) {
+  if(images.value.length === 0){//目前就只能这样实现。。。
+    ElMessage.warning('请至少上传1张图片作为文章标签图');
+    return;
+  }
   try {
     const quill = editorRef.value.getQuill(); // 获取 Quill 实例
     const editorContent = quill.getContents();
-    const editorText = quill.getText(0, 20);
+    const editorText = quill.getText(0, 200);
     if(props.param1 === 0){
       addArticle({
         title: title.value,
@@ -65,7 +69,7 @@ function submitArticle(flag: boolean) {
         content: JSON.stringify(editorContent),
         abstracts: editorText,
         eventId: eventId.value, // 示例 EventId，可根据实际需求动态获取
-        mainImage: "", // 主图 URL
+        mainImage: images.value[0], // 主图 URL
         images: images.value, // 图片 URL 列表
         isDraft: flag,
       }).then(res => {
@@ -137,6 +141,9 @@ function handleReplace() {
       author.value = res.data.result.author;
       eventId.value = res.data.result.eventId;
       userId.value = res.data.result.userId;
+      images.value = res.data.result.images;
+      //imageUrl.value = res.data.result.mainImage;
+      //imageFileList.value = [{ url: res.data.result.mainImage }]; // 确保 imageFileList 是一个对象数组
       //content.value = res.data.result.content;
       editorRef.value.getQuill().setContents(JSON.parse(res.data.result.content));
     });
@@ -147,6 +154,50 @@ setTimeout(function() {
 		document.getElementById("parentIframe").click();
 	}
 }, 0);
+// const imageUrl = ref('')
+// const imageFileList = ref([])
+// function uploadImage(formData: FormData) {
+//   return axios.post('/api/oss/upload', formData, {
+//     headers: { 'Content-Type': 'multipart/form-data' }
+//   })
+// }
+// function handleChange(file: any, fileList: any) {
+//     if(file.name.length > 10){
+//       file.name=file.name.substr(0, 10) + "..." +file.name.substr(file.name.length-4, file.name.length)
+//     }
+//     if(fileList.length >= 1){
+//       console.log("图:",fileList)
+//       imageFileList.value = fileList
+//       let formData = new FormData()
+//       formData.append('file', file.raw)
+//       uploadImage(formData).then(res => {
+//         imageUrl.value = res.data
+//       })
+//     }
+//     else {
+//       ElMessage.warning('请至少上传1张图片');
+//       imageUrl.value = ''
+//     }
+// }
+
+// function handleExceed() {
+//   ElMessage.warning(`当前限制选择 1 个文件`);
+// }
+
+// function uploadHttpRequest() {
+//   return new XMLHttpRequest()
+// }
+// function beforeUpload(file: any) {
+//     if (file.size / 1024 / 1024 > 1) {
+//       ElMessage({
+//         message: "上传文件大小不能超过1M!",
+//         type: 'error',
+//         center: true,
+//       })
+//       return false;
+//     }
+//     return true;
+// }
 </script>
 
 <template>
@@ -157,6 +208,31 @@ setTimeout(function() {
       <option value="0">请选择项目名称</option>
       <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
     </select>
+      <!-- <el-form-item label="文章主题logo" >
+        <el-upload
+          v-model:file-list="imageFileList"
+          :limit="1"
+          :before-upload="beforeUpload"
+          :on-change="handleChange"
+          :on-exceed="handleExceed"
+          :on-remove="handleChange"
+          class="upload-demo"
+          list-type="picture"
+          :http-request="uploadHttpRequest"
+          drag
+        >
+        <div v-if="!imageUrl">
+            <el-icon class="el-icon--upload">
+              <upload-filled />
+            </el-icon>
+            <div class="el-upload__text">
+              将文件拖到此处或单击此处上传。仅允许上传一份文件。
+            </div>
+          </div>
+          <img v-else :src="imageUrl" class="uploaded-image" />
+        </el-upload>
+      </el-form-item> -->
+    
     <QuillEditor
       theme="snow"
       toolbar="full"
@@ -215,5 +291,11 @@ button:hover {
 button.disabled-button {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.uploaded-image {
+  width: auto;
+  height: 150px;
+  object-fit: cover;
 }
 </style>

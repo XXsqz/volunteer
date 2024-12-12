@@ -14,7 +14,12 @@
             </nav>
         </aside>
         <main v-if="activeMenu === 'view-project'&& if_edit_event=== false">
-          <div class="top">
+          <div v-if="!searchable_event">
+            <el-icon name="filter" @click="searchable_event = true" class="large-icon">
+            <Filter/>
+            </el-icon>
+          </div>
+          <div class="top" v-if="searchable_event">
           <el-form ref="filter_event" label-width="120px" class="input-form" status-icon>
                 <el-form-item label="项目名称/Id" prop="name">
                     <el-input v-model="searchQuery" placeholder="请输入"/>
@@ -90,7 +95,12 @@
             <NewTable :param1="editid_event" @submitted="handleEventSubmitted"/>
         </main>
         <main v-if="activeMenu === 'view-article'&& if_edit_article=== false">
-          <div class="top">
+          <div v-if="!searchable_article">
+            <el-icon name="filter" @click="searchable_article = true" class="large-icon">
+            <Filter/>
+            </el-icon>
+          </div>
+          <div class="top" v-if="searchable_article">
             <el-form ref="filter_article" label-width="120px" class="input-form" status-icon>
               <el-form-item label="文章名称/Id" prop="name">
                 <el-input v-model="article_name" placeholder="请输入"/>
@@ -145,7 +155,12 @@
             <!-- <NewTable /> -->
         </main>
         <main v-if="activeMenu === 'drafts'&& if_edit_draft=== false">
-          <div class="top">
+          <div v-if="!searchable_draft">
+            <el-icon name="filter" @click="searchable_draft = true" class="large-icon">
+            <Filter/>
+          </el-icon>
+          </div>
+          <div class="top" v-if="searchable_draft">
             <el-form ref="filter_draft" label-width="120px" class="input-form" status-icon>
               <el-form-item label="草稿名称/Id" prop="name">
                 <el-input v-model="draft_name" placeholder="请输入"/>
@@ -206,6 +221,7 @@ import NewTable from '../../components/Table.vue'; // 导入新组件
 import { adminGetArticle,adminGetDraft} from '../../api/article';
 import { getEvent,adminGetEvent } from '../../api/event';
 import { parseTime } from '../../utils/index';
+import { Filter } from "@element-plus/icons-vue";
 interface Event{
     id: number;
     name: string;
@@ -323,6 +339,9 @@ const if_edit_draft = ref(false);
 const editid_article = ref(0);
 const editid_event= ref(0);
 const editid_draft= ref(0);
+const searchable_article = ref(false);
+const searchable_event = ref(false);
+const searchable_draft = ref(false);
 function editarticle(id: number){
     if_edit_article.value = true;
     editid_article .value = id;
@@ -418,6 +437,14 @@ const resetSearch = () => {
 </script>
 
 <style scoped>
+.large-icon {
+  font-size: 32px; /* 放大图标 */
+  cursor: pointer; /* 鼠标悬停时显示为指针 */
+  border: 2px solid #ccc; /* 边框颜色 */
+  padding: 10px; /* 内边距 */
+  border-radius: 5px; /* 圆角边框 */
+  display: inline-block; /* 使元素的尺寸包括内边距和边框 */
+}
 .top{ 
         width:100%; 
         border:1px solid#ccc; 

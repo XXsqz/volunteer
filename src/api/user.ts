@@ -57,3 +57,4 @@ export const userInfoUpdate = (updateInfo: UpdateInfo) => {
             return res
         })
 }
+

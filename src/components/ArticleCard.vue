@@ -1,30 +1,28 @@
 <template>
-    <div class="article-card" @click="handle(article.id)">
+    <div class="article-card" @click="handle(props.article.id)">
         <div class="image-container">
-            <img :src="article.mainImage" style="width: 150px; height: 150px" alt="Article Image"
+            <img :src="props.article.mainImage" style="width: 150px; height: 150px" alt="Article Image"
                 class="article-image" />
         </div>
         <div class="content">
-            <div class="title">{{ article.title }}</div>
-            <div class="abstract">{{ article.abstracts }}</div>
+            <div class="title">{{ props.article.title }}</div>
+            <div class="abstract">{{ props.article.abstracts }}...</div>
         </div>
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        article: {
-            type: Object,
-            required: true
-        }
-    },
-    methods: {
-        handle(id) {
-            this.$router.push({ path: '/volunteerDetail/' + id });
-        }
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue';
+import {router} from '../router'
+const props = defineProps({
+    article: {
+        type: Object,
+        required: true
     }
-};
+})
+function handle(id: number) {
+  router.push({ path: '/volunteerDetail/' + id });
+}
 </script>
 
 <style scoped>

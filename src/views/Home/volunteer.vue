@@ -4,9 +4,8 @@
 
         <main style="">
             <ul style="display: grid; justify-content: center;">
-                <li v-for="item in items">
-                    <ArticleCard :article=item />
-                </li>
+                <ArticleCard v-for="article in articles" 
+                :article= "article"/>
             </ul>
         </main>
 
@@ -20,13 +19,19 @@
 import { ref } from 'vue';
 import { getAllArticle } from '../../api/article';
 import ArticleCard from "../../components/ArticleCard.vue";
-var items = ref([])
+interface Article {
+    id: number;
+    title: string;
+    abstracts: string;
+    mainImage: string; 
+}
+const articles = ref<Article[]>([])
 
 getAllArticle().then(res => {
     if (res.data.code === '000') {
-        items.value = res.data.result;
-        console.log(items)
-        console.log(items.value[0].mainImage)
+        articles.value = res.data.result;
+        // console.log(items)
+        // console.log(items.value[0].mainImage)
     }
 });
 </script>
