@@ -1,5 +1,5 @@
-import {axios} from '../utils/request'
-import {EVENT_MODULE} from './_prefix'
+import { axios } from '../utils/request'
+import { EVENT_MODULE } from './_prefix'
 
 type AddInfo = {
     name: string,
@@ -33,7 +33,7 @@ type UpdateInfo = {
 // 新建文章
 export const addEvent = (addInfo: AddInfo) => {
     return axios.post(`${EVENT_MODULE}/add`, addInfo,
-        {headers: {'Content-Type': 'application/json'}})
+        { headers: { 'Content-Type': 'application/json' } })
         .then(res => {
             return res
         })
@@ -41,7 +41,7 @@ export const addEvent = (addInfo: AddInfo) => {
 
 export const updateEvent = (updateInfo: UpdateInfo) => {
     return axios.post(`${EVENT_MODULE}/update`, updateInfo,
-        {headers: {'Content-Type': 'application/json'}})
+        { headers: { 'Content-Type': 'application/json' } })
         .then(res => {
             return res
         })

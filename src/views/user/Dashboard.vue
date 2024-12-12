@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { userInfo, userInfoUpdate } from '../../api/user.ts'
+import { AddInfo, getPersonalRegistrations } from '../../api/registration.ts'
 import { router } from '../../router'
 import { UserFilled } from "@element-plus/icons-vue"
 import { Md5 } from 'ts-md5';
@@ -21,6 +22,14 @@ const isPasswordIdentical = computed(() => password.value == confirmPassword.val
 const changeDisabled = computed(() => {
     return !((hasConfirmPasswordInput.value && isPasswordIdentical.value) || newName.value != name.value || (newTel.value != tel.value && telLegal.value) || newStudentId.value != studentId.value)
 })
+
+var personalEvents = ref([])
+getPersonalRegistrations().then(res => {
+    if (res.data.code === '000') {
+        personalEvents.value = res.data.result;
+        console.log(res.data.result);
+    }
+});;
 
 
 getUserInfo()
@@ -122,6 +131,16 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
             <el-divider></el-divider>
 
         </el-card>
+
+        <el-card v-if="!displayInfoCard" class="change-card">
+            <template #header>
+                <div class="card-header">
+                    <span>个人主页</span>
+                </div>
+            </template>
+
+        </el-card>
+
 
 
         <el-card v-if="displayInfoCard" class="change-card">
