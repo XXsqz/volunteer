@@ -30,7 +30,7 @@ const articles = ref<Article[]>([])
 getAllArticle().then(res => {
     if (res.data.code === '000') {
         articles.value = res.data.result;
-        // console.log(items)
+         console.log(res.data.result)
         // console.log(items.value[0].mainImage)
     }
 });

@@ -31,6 +31,10 @@ getPersonalRegistrations().then(res => {
     }
 });;
 
+function formattedTime(date_str: string) {
+    const date = new Date(date_str)
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+}
 
 getUserInfo()
 function getUserInfo() {
@@ -139,6 +143,38 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
                 </div>
             </template>
 
+            <el-descriptions :column="1" border title="您参与过的项目">
+            </el-descriptions>
+
+            <el-card v-for="personalEvent in personalEvents" class="change-card">
+
+                <el-descriptions :column="1" border :title="personalEvent.name">
+
+                    <el-descriptions-item label="联系人">
+                        {{ personalEvent.contactPeople }}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="联系电话">
+                        {{ personalEvent.contactPhone }}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="地点">
+                        {{ personalEvent.location }}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="开始时间">
+                        {{ formattedTime(personalEvent.eventStartTime) }}
+                    </el-descriptions-item>
+
+                    <el-descriptions-item label="开始时间">
+                        {{ formattedTime(personalEvent.eventEndTime) }}
+                    </el-descriptions-item>
+
+                </el-descriptions>
+
+
+
+            </el-card>
         </el-card>
 
 
@@ -214,6 +250,7 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
 }
 
 .change-card {
+    margin-bottom: 25px;
     width: 66%;
 }
 
