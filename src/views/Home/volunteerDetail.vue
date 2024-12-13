@@ -9,7 +9,7 @@
         </div>
     
     <div class="application" v-if="!applying">
-        <el-button type="primary" @click="getinfo">申请</el-button>
+        <el-button type="primary" @click="getinfo" >申请参加该项目</el-button>
     </div>
     <div class="application-form-card" v-else>
     <el-card v-if="applying" class="application-form-card">
@@ -116,8 +116,8 @@ const htmlContent = ref('<p>1<strong>1<em>12<u>4</u></em><u>35</u></strong></p>'
 function submitApplication() {
   // 提交申请逻辑
   addApplication({
+    eventId: eventId.value,
     userId: userId.value,
-    eventId: eventId.value
   }).then(res => {
     console.log(res);
     if (res.data.code === '000') {
@@ -197,5 +197,10 @@ function handleArticleContent(id: number) {
 
 .el-form-item:last-child {
   margin-right: 0;
+}
+.application {
+  display: flex;
+  justify-content: flex-end; /* 将内容靠右对齐 */
+  padding: 10px; /* 可选：添加一些内边距 */
 }
 </style>

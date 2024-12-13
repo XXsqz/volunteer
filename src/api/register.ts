@@ -19,6 +19,7 @@ type UpdateInfo = {
 }
 
 export const addApplication = (addInfo: AddInfo) => {
+    console.log(addInfo)
     return axios.post(`${REGISTER_MODULE}/register`, addInfo,
         { headers: { 'Content-Type': 'application/json' } })
         .then(res => {
