@@ -14,16 +14,16 @@ const router = createRouter({
         component: () => import('../views/user/Register.vue'),
         meta: {title: '用户注册'}
     }, 
-    {
-        path: '/editor',
-        component: () => import('../components/Editor.vue'),
-        meta: {title: '编辑器'}
-    },
-    {
-        path: '/table',
-        component: () => import('../components/Table.vue'),
-        meta: {title: '表单'}
-    },
+    // {
+    //     path: '/editor',
+    //     component: () => import('../components/Editor.vue'),
+    //     meta: {title: '编辑器'}
+    // },
+    // {
+    //     path: '/table',
+    //     component: () => import('../components/Table.vue'),
+    //     meta: {title: '表单'}
+    // },
     {
         path: '/home',
         component: () => import('../views/Home.vue'),
@@ -50,7 +50,10 @@ const router = createRouter({
                 path: '/edit',
                 name: 'edit',
                 component: () => import('../views/admin/edit.vue'),
-                meta: {title: '管理界面'}
+                meta: {
+                    title: '管理界面',
+                    permission: ['ADMIN']
+                }
             },
         ]
     },  
@@ -65,33 +68,33 @@ const router = createRouter({
     }]
 })
 
-// router.beforeEach((to, _, next) => {
-//     const token: string | null = sessionStorage.getItem('token');
-//     const role: string | null = sessionStorage.getItem('role')
+router.beforeEach((to, _, next) => {
+    const token: string | null = sessionStorage.getItem('token');
+    const role: string | null = sessionStorage.getItem('role')
 
-//     if (to.meta.title) {
-//         document.title = to.meta.title
-//     }
+    if (to.meta.title) {
+        document.title = to.meta.title
+    }
 
-//     if (token) {
-//         if (to.meta.permission) {
-//             if (to.meta.permission.includes(role!)) {
-//                 next()
-//             } else {
-//                 next('/404')
-//             }
-//         } else {
-//             next()
-//         }
-//     } else {
-//         if (to.path === '/login') {
-//             next();
-//         } else if (to.path === '/register') {
-//             next()
-//         } else {
-//             next('/login')
-//         }
-//     }
-// })
+    // if (token) {
+        if (to.meta.permission) {
+            if (to.meta.permission.includes(role!)) {
+                next()
+            } else {
+                next('/404')
+            }
+        } else {
+            next()
+        }
+    // } else {
+    //     if (to.path === '/login') {
+    //         next();
+    //     } else if (to.path === '/register') {
+    //         next()
+    //     } else {
+    //         next('/login')
+    //     }
+    // }
+})
 
 export {router}

@@ -4,7 +4,6 @@ import { userInfo, userInfoUpdate } from '../../api/user.ts'
 import { AddInfo, getPersonalRegistrations } from '../../api/registration.ts'
 import { router } from '../../router'
 import { UserFilled } from "@element-plus/icons-vue"
-import { Md5 } from 'ts-md5';
 const name = ref('')
 const tel = ref('')
 const studentId = ref('')

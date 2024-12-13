@@ -6,8 +6,8 @@
                 <ul>
                     <li :class="{ active: activeMenu === 'home','custom-font': true }" @click="setActiveMenu('home')">主页</li>
                     <li :class="{ active: activeMenu === 'new-project' ,'custom-font': true}" @click="setActiveMenu('new-project')">新建项目</li>
-                    <li :class="{ active: activeMenu === 'new-article' ,'custom-font': true}" @click="setActiveMenu('new-article')">新建文章</li>
                     <li :class="{ active: activeMenu === 'view-project','custom-font': true }" @click="setActiveMenu('view-project')">查看项目</li>
+                    <li :class="{ active: activeMenu === 'new-article' ,'custom-font': true}" @click="setActiveMenu('new-article')">新建文章</li>
                     <li :class="{ active: activeMenu === 'view-article','custom-font': true }" @click="setActiveMenu('view-article')">查看文章</li>
                     <li :class="{ active: activeMenu === 'drafts' ,'custom-font': true}" @click="setActiveMenu('drafts')">草稿箱</li>
                 </ul>
@@ -54,9 +54,6 @@
                 <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
             </div>
           </div>
-  <!-- <button class="actions-button" @click="search_event">筛选</button>
-  <button class="reset-button" @click="resetSearch">清空筛选条件</button> -->
-
           <table>
             <thead>
               <tr>
@@ -83,13 +80,9 @@
                     <button class="edit-button" @click="editevent(event.id)">修改</button>
                     <button class="delete-button" @click="deleteevent(event.id)">删除</button>
                 </td>
-                <!-- <td><button class="export-button" @click="exportevent(event.id)">Export</button></td> -->
-              </tr>
+                </tr>
             </tbody>
           </table>
-          <div class="pagination">
-            <!-- Pagination controls go here -->
-          </div>
         </main>
         <main v-if="activeMenu === 'view-project'&& if_edit_event=== true">
             <NewTable :param1="editid_event" @submitted="handleEventSubmitted"/>
@@ -147,12 +140,10 @@
             <NewProject :param1="editid_article" @submitted="handleArticleSubmitted"/>
         </main>
         <main v-if="activeMenu === 'new-project'">
-            <!-- <NewProject /> -->
             <NewTable :param1="0"/>
         </main>
         <main v-if="activeMenu === 'new-article'">
             <NewProject :param1="0"/>
-            <!-- <NewTable /> -->
         </main>
         <main v-if="activeMenu === 'drafts'&& if_edit_draft=== false">
           <div v-if="!searchable_draft">
@@ -207,21 +198,81 @@
             <NewProject :param1="editid_draft" @submitted="handledraftSubmitted"/>
         </main>
         <main v-if="activeMenu === 'home'">
-          <h1>Home</h1>
-          <p>Here you can view and manage your drafts.</p>
+          <div class="avatar-area">
+            <el-avatar :icon="UserFilled" :size="80"></el-avatar>
+            <span class="avatar-text"> 欢迎您，管理员 {{ name }}</span>
+          </div>
+          <el-divider></el-divider>
+            <el-descriptions :column="1" border title="个人信息" class="stats"> 
+                <el-descriptions-item label="联系电话">
+                    {{ tel }}
+                </el-descriptions-item>
+                <el-descriptions-item label="学号">
+                    {{ studentId }}
+                </el-descriptions-item>
+                <el-descriptions-item label="创建项目">
+                    {{ eventNum }}
+                </el-descriptions-item>
+                <el-descriptions-item label="编写文章">
+                    {{ articleNum }}
+                </el-descriptions-item>
+                <el-descriptions-item label="草稿">
+                    {{ draftNum }}
+                </el-descriptions-item>
+            </el-descriptions>
         </main>
       </div>
     </div>
   </template>
   
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import NewProject from '../../components/Editor.vue'; // 导入新组件
 import NewTable from '../../components/Table.vue'; // 导入新组件
 import { adminGetArticle,adminGetDraft} from '../../api/article';
 import { getEvent,adminGetEvent } from '../../api/event';
 import { parseTime } from '../../utils/index';
 import { Filter } from "@element-plus/icons-vue";
+import { UserFilled } from "@element-plus/icons-vue"
+import { userInfo } from '../../api/user';
+const name = ref('');
+const tel = ref('');
+const studentId = ref('');
+const eventNum = ref(0);
+const articleNum = ref(0);
+const draftNum = ref(0);
+getUserInfo()
+function getUserInfo() {
+    userInfo().then(res => {
+        name.value = res.data.result.name
+        tel.value = res.data.result.phone
+        studentId.value = res.data.result.studentId
+    })
+    adminGetArticle().then(res => {
+        if (res.data.code === '000') {
+            articleNum.value = res.data.result.length;
+        }
+        else if (res.data.code === '400') {
+            alert("获取文章失败，请稍后重试！");
+        }
+    });
+    adminGetEvent().then(res => {
+        if (res.data.code === '000') {
+            eventNum.value = res.data.result.length;
+        }
+        else if (res.data.code === '400') {
+            alert("获取项目失败，请稍后重试！");
+        }
+    });
+    adminGetDraft().then(res => {
+        if (res.data.code === '000') {
+            draftNum.value = res.data.result.length;
+        }
+        else if (res.data.code === '400') {
+            alert("获取草稿失败，请稍后重试！");
+        }
+    });
+}
 interface Event{
     id: number;
     name: string;
@@ -437,6 +488,17 @@ const resetSearch = () => {
 </script>
 
 <style scoped>
+.avatar-area {
+    justify-content: space-around;
+    align-items: center;
+    gap: 30px;
+}
+
+.avatar-text {
+    font-size: x-large;
+    font-weight: bolder;
+    padding-right: 40px;
+}
 .large-icon {
   font-size: 32px; /* 放大图标 */
   cursor: pointer; /* 鼠标悬停时显示为指针 */
@@ -444,6 +506,9 @@ const resetSearch = () => {
   padding: 10px; /* 内边距 */
   border-radius: 5px; /* 圆角边框 */
   display: inline-block; /* 使元素的尺寸包括内边距和边框 */
+}
+.stats{
+  width: 50%;
 }
 .top{ 
         width:100%; 
