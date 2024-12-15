@@ -73,7 +73,7 @@
                 <td>{{ event.name }}</td>
                 <td>{{ event.contactPeople }}</td>
                 <td>{{ event.location }}</td>
-                <td>{{ event.type }}</td>
+                <td>{{ parseCategory(event.type)}}</td>
                 <td>{{ event.finished ? '已结束' : '未结束' }}</td>
                 <td>{{ parseTime(event.updateTime) }}</td>
                 <td>
@@ -229,9 +229,9 @@
 import { ref, watch } from 'vue';
 import NewProject from '../../components/Editor.vue'; // 导入新组件
 import NewTable from '../../components/Table.vue'; // 导入新组件
-import { adminGetArticle,adminGetDraft} from '../../api/article';
-import { getEvent,adminGetEvent } from '../../api/event';
-import { parseTime } from '../../utils/index';
+import { adminGetArticle,adminGetDraft, deleteArticle} from '../../api/article';
+import { getEvent,adminGetEvent,deleteEvent} from '../../api/event';
+import { parseTime, parseCategory} from '../../utils/index';
 import { Filter } from "@element-plus/icons-vue";
 import { UserFilled } from "@element-plus/icons-vue"
 import { userInfo } from '../../api/user';
@@ -313,6 +313,7 @@ function handleArticle(){
             //console.log("获取文章成功:", res);
             articles.value = res.data.result;
             for(const article of articles.value){
+              if(article.eventId !== 0)
                 getEvent(article.eventId).then(res => {
                     if (res.data.code === '000') {
                         //console.log("获取文章成功:", res);
@@ -387,7 +388,7 @@ function setActiveMenu(menu: string){
       }).then(() => {
         if_edit_article.value = false;
         if_edit_event.value = false;
-        if_edit_draft.value = false;w
+        if_edit_draft.value = false;
         activeMenu.value = menu;
         if(menu === 'view-article')handleArticle();
         if(menu === 'view-project')handleEvent();
@@ -417,7 +418,17 @@ function editarticle(id: number){
     console.log("编辑文章",id);
 };
 function deletearticle(id: number){
-    console.log("删除文章",id);
+  deleteArticle(id).then(res => {
+    if (res.data.code === '000') {
+        console.log("删除成功:", res);
+        alert("删除成功！");
+        handleArticle();
+        handleDraft();
+    }
+    else if (res.data.code === '400') {
+        alert("删除失败，请稍后重试！");
+    }
+  });
 };
 function editevent(id: number){
     if_edit_event.value = true;
@@ -425,7 +436,16 @@ function editevent(id: number){
     console.log("编辑项目",id);
 };
 function deleteevent(id: number){
-    console.log("删除项目",id);
+  deleteEvent(id).then(res => {
+    if (res.data.code === '000') {
+        console.log("删除成功:", res);
+        alert("删除成功！");
+        handleEvent();
+    }
+    else if (res.data.code === '400') {
+        alert("删除失败，请稍后重试！");
+    }
+  });
 };
 function editdraft(id: number){
     if_edit_draft.value = true;

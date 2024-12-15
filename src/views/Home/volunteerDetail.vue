@@ -7,7 +7,9 @@
         <div class="content">
             <div class="html-content" v-html="htmlContent"></div>
         </div>
-    <div class="application" v-if="!token">
+        <div class="application" v-if="!eventId">
+        </div>
+    <div class="application" v-else-if="!token">
         <el-button type="primary" disabled class="disabled-button" >请先登录</el-button>
     </div>
     <div class="application-form-card" v-else-if="applying">
@@ -59,7 +61,7 @@
         <el-button type="primary" disabled class="disabled-button" >项目报名已结束</el-button>
     </div>
     <div class="application" v-else-if="applied">
-        <el-button type="primary" disabled class="disabled-button" >已申请参加成功</el-button>
+        <el-button type="primary" disabled class="disabled-button" >已申请成功</el-button>
     </div>
     <div class="application" v-else-if="!full">
         <el-button type="primary" @click="getinfo" >申请参加该项目</el-button>
@@ -139,6 +141,7 @@ function getinfo(){
         form.value.studentId = res.data.result.studentId
         userId.value = res.data.result.id
     })
+    if(eventId.value!=0)
     getEvent(eventId.value).then(res => {
         form.value.projectName = res.data.result.name
         form.value.startTime = parseTime(res.data.result.eventStartTime)

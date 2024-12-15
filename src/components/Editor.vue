@@ -26,7 +26,7 @@ const images = ref<string[]>([]); // 用于存储图片的 URL 列表
 const editorRef = ref(null);
 const isFormValid = computed(() => {
   //console.log("content:",content.value);
-  return title.value.trim() !== "" && author.value.trim() !== "" && eventId.value !== 0 && content.value !== "";
+  return title.value.trim() !== "" && author.value.trim() !== "" && content.value !== "";
 });
 
 function submitArticle(flag: boolean) {
@@ -208,7 +208,7 @@ setTimeout(function() {
     <input type="text" v-model="title" placeholder="请输入文章标题" class="title-input" />
     <input type="text" v-model="author" placeholder="请输入作者名称" class="author-input" />
     <select id="event" v-model="eventId" required class="event-selection" >
-      <option value="0">请选择项目名称</option>
+      <option value="0">请选择项目名称(可选)</option>
       <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
     </select>
       <!-- <el-form-item label="文章主题logo" >
