@@ -38,6 +38,7 @@ function submitForm() {
     }).then(res => {
       if (res.data.code === '000') {
         console.log("项目提交成功:", res);
+        resetForm();
         alert("项目提交成功！");
       }
       else if (res.data.code === '400') {
@@ -62,6 +63,7 @@ function submitForm() {
       if (res.data.code === '000') {
         console.log("项目更新成功:", res);
         alert("项目更新成功！");
+        resetForm();
         emits('submitted');
       }
       else if (res.data.code === '400') {
@@ -97,6 +99,20 @@ const validateForm = () => {
   }
   return isValid;
 };
+function resetForm() {
+  form.value = {
+    name: '',
+    eventStartTime: '',
+    eventEndTime: '',
+    enrollStartTime: '',
+    enrollEndTime: '',
+    recruitNumber: 0,
+    location: '',
+    type: '',
+    contactPeople: '',
+    contactPhone: '',
+  };
+}
 </script>
 
 <template>

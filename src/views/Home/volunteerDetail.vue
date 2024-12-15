@@ -4,9 +4,31 @@
             <h1>{{ title }}</h1>
             <p>{{ author }}</p>
         </div>
-        <div class="content">
-            <div class="html-content" v-html="htmlContent"></div>
-        </div>
+        <el-container> 
+          <el-aside width=15%></el-aside>
+        <el-aside class="content">
+             <div class="html-content" v-html="htmlContent"></div>
+        </el-aside>
+        <el-aside width=15%>
+          <button
+            v-if="showBackToTop"
+            @click="scrollToTop"
+            class="back-to-top"
+            data-tooltip="回到顶部"
+            data-tooltip-position="left"
+            data-tooltip-will-hide-on-click="true"
+            aria-label="回到顶部"
+            type="button"
+            title="回到顶部">
+            <el-icon class="top-icon"><Top /></el-icon>
+          </button>
+        </el-aside>
+      </el-container>
+        <!-- <div class="content">
+           
+     -->
+    <!-- <button data-tooltip="回到顶部" data-tooltip-position="left" data-tooltip-will-hide-on-click="true" aria-label="回到顶部" type="button" class="back-to-top"></button> -->
+        <!-- </div> -->
         <div class="application" v-if="!eventId">
         </div>
     <div class="application" v-else-if="!token">
@@ -75,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted} from 'vue';
 import { getArticle } from '../../api/article';
 import Quill from 'quill';
 import { useRoute } from 'vue-router';
@@ -84,6 +106,7 @@ import { getEvent } from '../../api/event';
 import { parseTime, parseCategory} from '../../utils/index';
 import { addApplication } from '../../api/register';
 import { getPersonalRegistrations } from '../../api/register';
+import { Top} from "@element-plus/icons-vue";
 const route = useRoute();
 const articleId = Number(route.params.id);
 const eventId = ref(0);
@@ -94,6 +117,25 @@ const full = ref(false);
 const eventstart = ref(true);
 const eventend = ref(false);
 const token = sessionStorage.getItem('token');
+const showBackToTop = ref(false);
+const buttonTop = ref('80%'); // 初始位置
+
+function handleScroll() {
+  const scrollY = window.scrollY;
+  showBackToTop.value = scrollY > 200; // 当滚动距离超过200px时显示按钮
+  buttonTop.value = `${scrollY + window.innerHeight - 100}px`; // 动态调整按钮位置
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 // 在组件挂载时获取文章ID并输出
 interface Application{
     name: string;
@@ -190,9 +232,49 @@ function handleArticleContent(id: number) {
         htmlContent.value = quill.root.innerHTML;
     });
 }
+/*<button data-tooltip="回到顶部" data-tooltip-position="left" data-tooltip-will-hide-on-click="true" aria-label="回到顶部" type="button" class="Button CornerButton Button--plain css-4lspwd"></button> */
 </script>
 
 <style scoped>
+/* .back-to-top {
+    padding: 0px;
+    font-size: 14px;
+    line-height: inherit;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    background: rgb(255, 255, 255);
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    color: rgb(132, 145, 165);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+} */
+.back-to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 10px; /* 固定在视口底部 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255, 255, 255);
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  color: rgb(132, 145, 165);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+  cursor: pointer;
+  transition: opacity 0.3s; /* 平滑过渡效果 */
+}
+.top-icon {
+  font-size: 24px; /* 增大图标 */
+  font-weight: bold; /* 加粗图标 */
+}
 .container {
     display: flex;
     flex-direction: column;
@@ -212,12 +294,12 @@ function handleArticleContent(id: number) {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    width: 100%;
+    width: 70%;
     height: auto;
 }
 
 .html-content {
-    width: 70%;
+    width: 100%;
     height: 100%;
     background-color: #f9f9f9;
     padding: 20px;
