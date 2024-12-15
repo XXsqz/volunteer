@@ -45,7 +45,7 @@ function handleLogin() {
         if(res.data.result.role === 'ADMIN') {
           router.push({path: "/edit"})
         } else
-        router.push({path: "/dashboard"})
+        router.push({path: "/volunteer"})
       })
     } else if (res.data.code === '400') {
       ElMessage({

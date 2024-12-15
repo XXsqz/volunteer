@@ -3,9 +3,11 @@ import {router} from '../router'
 import {User, SwitchButton, Document,Discount} from "@element-plus/icons-vue"   //图标
 
 const role = sessionStorage.getItem('role')    //登录的时候插入的
-
+const token = sessionStorage.getItem('token')  //登录的时候插入的
 //退出登录
-function logout() {
+
+function logout(event: Event) {
+  event.preventDefault();
   ElMessageBox.confirm(
       '是否要退出登录？',
       '提示',
@@ -35,13 +37,14 @@ function logout() {
           <h1 @click="navigate" class="header-text"> volunteer</h1>
         </router-link>
       </el-col>
-      <!-- <el-col :span="15">
-      </el-col> -->
 
       <el-col :span="3" class="header-icon">
         <router-link to="/dashboard" v-slot="{navigate}">
-          <el-icon @click="navigate" :size="35" color="blue" ><User /></el-icon>
-          <el-icon @click="logout" :size="35" color="blue" style="margin-left: 10px;" ><SwitchButton /></el-icon>
+          <el-icon @click="navigate" :size="35" color="blue" ><User /></el-icon >
+            <router-link to="/login" v-slot="{navigate}">
+              <el-icon @click="navigate" :size="35" color="blue" v-if="!token"><Key /></el-icon>
+            </router-link>
+          <el-icon @click="logout" :size="35" color="blue" style="margin-left: 10px;" v-if="token"><SwitchButton /></el-icon>
         </router-link>
       </el-col>
     
