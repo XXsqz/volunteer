@@ -379,10 +379,28 @@ watch(activeMenu, (newValue) => {
   localStorage.setItem('activeMenu', newValue);
 });
 function setActiveMenu(menu: string){
-    activeMenu.value = menu;
-    if(menu === 'view-article')handleArticle();
-    if(menu === 'view-project')handleEvent();
-    if(menu === 'drafts')handleDraft();
+    if(if_edit_article.value||if_edit_event.value||if_edit_draft.value){
+      ElMessageBox.confirm('您的修改未保存，确定要离开编辑页面吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if_edit_article.value = false;
+        if_edit_event.value = false;
+        if_edit_draft.value = false;w
+        activeMenu.value = menu;
+        if(menu === 'view-article')handleArticle();
+        if(menu === 'view-project')handleEvent();
+        if(menu === 'drafts')handleDraft();
+      }).catch(() => {
+      })
+    }
+    else {
+      activeMenu.value = menu;
+      if(menu === 'view-article')handleArticle();
+      if(menu === 'view-project')handleEvent();
+      if(menu === 'drafts')handleDraft();
+  }
 };
 const if_edit_article = ref(false);
 const if_edit_event = ref(false);

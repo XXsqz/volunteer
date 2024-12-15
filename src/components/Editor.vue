@@ -30,15 +30,15 @@ const isFormValid = computed(() => {
 });
 
 function submitArticle(flag: boolean) {
-  if(images.value.length === 0){//目前就只能这样实现。。。
-    ElMessage.warning('请至少上传1张图片作为文章标签图');
-    return;
-  }
   try {
     const quill = editorRef.value.getQuill(); // 获取 Quill 实例
     const editorContent = quill.getContents();
     const editorText = quill.getText(0, 200);
     if(props.param1 === 0){
+      if(images.value.length === 0){//目前就只能这样实现。。。
+        ElMessage.warning('请至少上传1张图片作为文章标签图');
+        return;
+      }
       addArticle({
         title: title.value,
         author: author.value,
@@ -94,7 +94,10 @@ const resetForm = () => {
   title.value = "";
   author.value = "";
   content.value = "";
+  eventId.value = 0;
   images.value = [];
+  editorRef.value.getQuill().setContents([{ insert: "\n" }]); // 清空编辑器内容
+
 };
 
 const onEditorChange = (content:any) => {
