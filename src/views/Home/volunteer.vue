@@ -1,28 +1,23 @@
 <template>
     <div class="homepage">
-        <img class="title_img" :src="'https://s3-us-west-2.amazonaws.com/s.cdpn.io/25480/hero-img.jpg'" />
+        <img class="title_img" :src="'https://chinavolunteer.mca.gov.cn/site/static/img/header_bg.acdffe9.png'" />
+
+        <el-input class="search_input" v-model="search_input" @change='searchChange()' placeholder="搜索文章...">
+        </el-input>
 
         <main style="">
             <ul style="display: grid; justify-content: center;">
-                <ArticleCard v-for="article in paginatedArticles" 
-                :article= "article"/>
+                <ArticleCard v-for="article in paginatedArticles" :article="article" />
             </ul>
-            
+
         </main>
         <div class="pagination" v-if="totalPage > 1">
-            <a href="#" 
-                @click.prevent="prevPage" 
-                :class="{ disabled: currentPage === 1 }">上一页
+            <a href="#" @click.prevent="prevPage" :class="{ disabled: currentPage === 1 }">上一页
             </a>
-            <a href="#" 
-                v-for="page in page_range" 
-                :key="page" 
-                @click.prevent="goToPage(page)"
+            <a href="#" v-for="page in page_range" :key="page" @click.prevent="goToPage(page)"
                 :class="{ active: currentPage === page }">{{ page }}
             </a>
-            <a href="#" 
-                @click.prevent="nextPage" 
-                :class="{ disabled: currentPage === totalPage }">下一页
+            <a href="#" @click.prevent="nextPage" :class="{ disabled: currentPage === totalPage }">下一页
             </a>
         </div>
         <footer>
@@ -32,20 +27,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref,computed } from 'vue';
+import { ref, computed } from 'vue';
 import { getAllArticle } from '../../api/article';
 import ArticleCard from "../../components/ArticleCard.vue";
+import InputSearch from '../../components/InputSearch.vue'
 interface Article {
     id: number;
     title: string;
     abstracts: string;
-    mainImage: string; 
+    mainImage: string;
 }
 const articles = ref<Article[]>([])
 const currentPage = ref(1)
 const itemsPerPage = ref(4)
 const pageSize = ref(20)
 const totalnum = ref(0)
+const search_input = ref("")
+
 getAllArticle().then(res => {
     if (res.data.code === '000') {
         articles.value = res.data.result;
@@ -54,31 +52,40 @@ getAllArticle().then(res => {
         // console.log(items.value[0].mainImage)
     }
 });
+
 const totalPage = computed(() => {
-  return Math.ceil(totalnum.value/itemsPerPage.value)
+    return Math.ceil(totalnum.value / itemsPerPage.value)
 })
+
 function prevPage() {
-  if (currentPage.value > 1) currentPage.value--
+    if (currentPage.value > 1) currentPage.value--
 }
+
 function nextPage() {
-  if (currentPage.value < totalPage.value) currentPage.value++
+    if (currentPage.value < totalPage.value) currentPage.value++
 }
+
 function goToPage(page: number) {
-  currentPage.value = page
+    currentPage.value = page
 }
+
+function searchChange() {
+    console.log("change to " + search_input.value)
+}
+
 const page_range = computed(() => {
-  const end = Math.min(currentPage.value + pageSize.value -1, totalPage.value);
-  const start = Math.min(currentPage.value,Math.max(end - pageSize.value + 1, 1));
-  const range = [];
-  for (let i = start; i <= end; i++) {
-    range.push(i);
-  }
-  return range;
+    const end = Math.min(currentPage.value + pageSize.value - 1, totalPage.value);
+    const start = Math.min(currentPage.value, Math.max(end - pageSize.value + 1, 1));
+    const range = [];
+    for (let i = start; i <= end; i++) {
+        range.push(i);
+    }
+    return range;
 })
 const paginatedArticles = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return articles.value.slice(start, end);
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return articles.value.slice(start, end);
 });
 </script>
 
@@ -158,20 +165,30 @@ footer {
 li {
     list-style: none
 }
+
+.search_input {
+    margin-top: 20px;
+    margin-left: 25%;
+    width: 50%
+}
+
 .pagination {
-  text-align: center;
-  margin-top: 20px;
+    text-align: center;
+    margin-top: 20px;
 }
+
 .pagination a {
-  margin: 0 5px;
-  text-decoration: none;
-  color: #6200ea;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #6200ea;
 }
+
 .pagination a.disabled {
-  color: grey;
-  cursor: not-allowed;
+    color: grey;
+    cursor: not-allowed;
 }
+
 .pagination a.active {
-  font-weight: bold;
+    font-weight: bold;
 }
 </style>
