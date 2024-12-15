@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { userInfo, userInfoUpdate } from '../../api/user.ts'
-import { getPersonalRegistrations } from '../../api/registration.ts'
+import { deleteRegistration, getPersonalRegistrations } from '../../api/register.ts'
 import { router } from '../../router'
 import { UserFilled } from "@element-plus/icons-vue"
 const name = ref('')
@@ -109,6 +109,42 @@ function updatePassword() {
 // 电话号码的规则
 const chinaMobileRegex = /^1(3[0-9]|4[579]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[189])\d{8}$/
 const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
+function exitProject(id: number) {
+    ElMessageBox.confirm(
+        '是否要退出该项目？',
+        '提示',
+        {
+            customClass: "customDialog",
+            confirmButtonText: '是',
+            cancelButtonText: '否',
+            type: "warning",
+            showClose: false,
+            roundButton: true,
+            center: true
+        }
+    ).then(() => {
+        deleteRegistration(id).then(res => {
+            if (res.data.code === '000') {
+                ElMessage({
+                    customClass: 'customMessage',
+                    type: 'success',
+                    message: '退出成功！',
+                })
+                getPersonalRegistrations().then(res => {
+                    if (res.data.code === '000') {
+                        personalEvents.value = res.data.result;
+                    }
+                });
+            } else if (res.data.code === '400') {
+                ElMessage({
+                    customClass: 'customMessage',
+                    type: 'error',
+                    message: res.data.msg,
+                })
+            }
+        })
+    })
+}
 </script>
 
 <template>
@@ -156,6 +192,11 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
             <el-card v-for="personalEvent in personalEvents" class="change-card">
 
                 <el-descriptions :column="1" border :title="personalEvent.name">
+                    <template #extra>
+                        <el-button @click="exitProject(personalEvent.id)" type="danger" size="mini" style="margin-left: 10px;">
+                            退出项目
+                        </el-button>
+                    </template>
 
                     <el-descriptions-item label="联系人">
                         {{ personalEvent.contactPeople }}

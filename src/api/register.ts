@@ -34,3 +34,10 @@ export const getPersonalRegistrations = () => {
             return res
         })
 }
+
+export const deleteRegistration = (eventId: number) => {
+    return axios.delete(`${REGISTER_MODULE}/delete/${eventId}`)
+        .then(res => {
+            return res
+        })
+}

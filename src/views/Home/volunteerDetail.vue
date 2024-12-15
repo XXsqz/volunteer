@@ -4,31 +4,28 @@
             <h1>{{ title }}</h1>
             <p>{{ author }}</p>
         </div>
-        <el-container> 
-          <el-aside width=15%></el-aside>
-        <el-aside class="content">
+        <el-container style="width: 100%; display: flex;">  
+          <el-aside style="width: 15%;">
+            <!-- <div class="html-content" v-html="htmlContent"></div> -->
+          </el-aside>
+          <el-aside class="content" style="width: 70%;">
              <div class="html-content" v-html="htmlContent"></div>
-        </el-aside>
-        <el-aside width=15%>
-          <button
-            v-if="showBackToTop"
-            @click="scrollToTop"
-            class="back-to-top"
-            data-tooltip="回到顶部"
-            data-tooltip-position="left"
-            data-tooltip-will-hide-on-click="true"
-            aria-label="回到顶部"
-            type="button"
-            title="回到顶部">
-            <el-icon class="top-icon"><Top /></el-icon>
-          </button>
-        </el-aside>
-      </el-container>
-        <!-- <div class="content">
-           
-     -->
-    <!-- <button data-tooltip="回到顶部" data-tooltip-position="left" data-tooltip-will-hide-on-click="true" aria-label="回到顶部" type="button" class="back-to-top"></button> -->
-        <!-- </div> -->
+          </el-aside>
+          <el-aside style="width: 15%;">
+            <button
+              v-if="showBackToTop"
+              @click="scrollToTop"
+              class="back-to-top"
+              data-tooltip="回到顶部"
+              data-tooltip-position="left"
+              data-tooltip-will-hide-on-click="true"
+              aria-label="回到顶部"
+              type="button"
+              title="回到顶部">
+              <el-icon class="top-icon"><Top /></el-icon>
+            </button>
+          </el-aside>
+        </el-container>
         <div class="application" v-if="!eventId">
         </div>
     <div class="application" v-else-if="!token">
@@ -213,7 +210,6 @@ function submitApplication() {
     }
   });
 }
-// console.log("Article ID:", articleId);
 let quill: Quill;
 const quillContainer = document.createElement('div');
 quill = new Quill(quillContainer);
@@ -236,25 +232,6 @@ function handleArticleContent(id: number) {
 </script>
 
 <style scoped>
-/* .back-to-top {
-    padding: 0px;
-    font-size: 14px;
-    line-height: inherit;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    justify-content: center;
-    background: rgb(255, 255, 255);
-    border-radius: 4px;
-    width: 40px;
-    height: 40px;
-    color: rgb(132, 145, 165);
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
-} */
 .back-to-top {
   position: fixed;
   right: 20px;
