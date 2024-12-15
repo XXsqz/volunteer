@@ -4,11 +4,27 @@
 
         <main style="">
             <ul style="display: grid; justify-content: center;">
-                <ArticleCard v-for="article in articles" 
+                <ArticleCard v-for="article in paginatedArticles" 
                 :article= "article"/>
             </ul>
+            
         </main>
-
+        <div class="pagination" v-if="totalPage > 1">
+            <a href="#" 
+                @click.prevent="prevPage" 
+                :class="{ disabled: currentPage === 1 }">上一页
+            </a>
+            <a href="#" 
+                v-for="page in page_range" 
+                :key="page" 
+                @click.prevent="goToPage(page)"
+                :class="{ active: currentPage === page }">{{ page }}
+            </a>
+            <a href="#" 
+                @click.prevent="nextPage" 
+                :class="{ disabled: currentPage === totalPage }">下一页
+            </a>
+        </div>
         <footer>
             <p>联系我们：volunteer@example.com</p>
         </footer>
@@ -16,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref,computed } from 'vue';
 import { getAllArticle } from '../../api/article';
 import ArticleCard from "../../components/ArticleCard.vue";
 interface Article {
@@ -26,13 +42,43 @@ interface Article {
     mainImage: string; 
 }
 const articles = ref<Article[]>([])
-
+const currentPage = ref(1)
+const itemsPerPage = ref(4)
+const pageSize = ref(20)
+const totalnum = ref(0)
 getAllArticle().then(res => {
     if (res.data.code === '000') {
         articles.value = res.data.result;
-         console.log(res.data.result)
+        totalnum.value = res.data.result.length;
+        //console.log(res.data.result)
         // console.log(items.value[0].mainImage)
     }
+});
+const totalPage = computed(() => {
+  return Math.ceil(totalnum.value/itemsPerPage.value)
+})
+function prevPage() {
+  if (currentPage.value > 1) currentPage.value--
+}
+function nextPage() {
+  if (currentPage.value < totalPage.value) currentPage.value++
+}
+function goToPage(page: number) {
+  currentPage.value = page
+}
+const page_range = computed(() => {
+  const end = Math.min(currentPage.value + pageSize.value -1, totalPage.value);
+  const start = Math.min(currentPage.value,Math.max(end - pageSize.value + 1, 1));
+  const range = [];
+  for (let i = start; i <= end; i++) {
+    range.push(i);
+  }
+  return range;
+})
+const paginatedArticles = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return articles.value.slice(start, end);
 });
 </script>
 
@@ -111,5 +157,21 @@ footer {
 
 li {
     list-style: none
+}
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+.pagination a {
+  margin: 0 5px;
+  text-decoration: none;
+  color: #6200ea;
+}
+.pagination a.disabled {
+  color: grey;
+  cursor: not-allowed;
+}
+.pagination a.active {
+  font-weight: bold;
 }
 </style>

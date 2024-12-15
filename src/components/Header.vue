@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {router} from '../router'
-import {User, SwitchButton, Document,Discount} from "@element-plus/icons-vue"   //图标
+import {User, SwitchButton, Key} from "@element-plus/icons-vue"   //图标
 
 const role = sessionStorage.getItem('role')    //登录的时候插入的
 const token = sessionStorage.getItem('token')  //登录的时候插入的
@@ -40,10 +40,10 @@ function logout(event: Event) {
 
       <el-col :span="3" class="header-icon">
         <router-link to="/dashboard" v-slot="{navigate}">
-          <el-icon @click="navigate" :size="35" color="blue" ><User /></el-icon >
-            <router-link to="/login" v-slot="{navigate}">
-              <el-icon @click="navigate" :size="35" color="blue" v-if="!token"><Key /></el-icon>
-            </router-link>
+          <el-icon @click="navigate" :size="35" color="blue" v-if="token&&role!='ADMIN'"><User /></el-icon >
+        <router-link to="/login" v-slot="{navigate}">
+            <el-icon @click="navigate" :size="35" color="blue" v-if="!token"><Key /></el-icon>
+          </router-link>
           <el-icon @click="logout" :size="35" color="blue" style="margin-left: 10px;" v-if="token"><SwitchButton /></el-icon>
         </router-link>
       </el-col>

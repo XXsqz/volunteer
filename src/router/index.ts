@@ -32,7 +32,10 @@ const router = createRouter({
                 path: '/dashboard',
                 name: 'Dashboard',
                 component: () => import('../views/user/Dashboard.vue'),
-                meta: {title: '个人信息'}
+                meta: {
+                    title: '个人信息',
+                    permission: ['NORMAL_USER']
+                }
             },
             {
                 path: '/volunteer',

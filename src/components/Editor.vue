@@ -25,7 +25,7 @@ const content = ref("");
 const images = ref<string[]>([]); // 用于存储图片的 URL 列表
 const editorRef = ref(null);
 const isFormValid = computed(() => {
-  console.log("content:",content.value);
+  //console.log("content:",content.value);
   return title.value.trim() !== "" && author.value.trim() !== "" && eventId.value !== 0 && content.value !== "";
 });
 
