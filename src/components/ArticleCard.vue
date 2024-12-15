@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import {router} from '../router'
 const props = defineProps({
     article: {

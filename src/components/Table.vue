@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import NewProject from '../components/Editor.vue'; // 导入新组件
 import { addEvent, updateEvent } from '../api/event';
-import { defineProps, defineEmits } from 'vue';
 import { getEvent } from '../api/event';
-import { parseCategory, parseTime } from '../utils/index';
+import { parseCategory} from '../utils/index';
 const props = defineProps<{
   param1: number;
 }>();

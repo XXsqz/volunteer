@@ -2,7 +2,6 @@
 import {ref, computed} from 'vue'
 import {router} from '../../router'
 import {userInfo, userLogin} from "../../api/user.ts"
-import { Md5 } from 'ts-md5';
 
 // 输入框值（需要在前端拦截不合法输入：是否为空+额外规则）
 const tel = ref('')

@@ -3,12 +3,10 @@ import { ref, computed } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
-import axios from "axios";
 import { getAllEvent } from '../api/event';
 
 import { ossUpload } from "../api/oss.ts";
 import UploadImg from "../components/UploadImg.vue";
-import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps<{
     param1: number;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { userInfo, userInfoUpdate } from '../../api/user.ts'
-import { AddInfo, getPersonalRegistrations } from '../../api/registration.ts'
+import { getPersonalRegistrations } from '../../api/registration.ts'
 import { router } from '../../router'
 import { UserFilled } from "@element-plus/icons-vue"
 const name = ref('')
@@ -21,8 +21,16 @@ const isPasswordIdentical = computed(() => password.value == confirmPassword.val
 const changeDisabled = computed(() => {
     return !((hasConfirmPasswordInput.value && isPasswordIdentical.value) || newName.value != name.value || (newTel.value != tel.value && telLegal.value) || newStudentId.value != studentId.value)
 })
-
-var personalEvents = ref([])
+interface PersonalEvent {
+    id: number;
+    name: string;
+    contactPeople: string;
+    contactPhone: string;
+    location: string;
+    eventStartTime: string;
+    eventEndTime: string;
+}
+const personalEvents = ref<PersonalEvent[]>([])
 getPersonalRegistrations().then(res => {
     if (res.data.code === '000') {
         personalEvents.value = res.data.result;
@@ -182,9 +190,7 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
             <template #header>
                 <div class="card-header">
                     <span>修改个人信息</span>
-                    <el-button @click="updatePassword" :disabled="changeDisabled">
-                        修改
-                    </el-button>
+                    
                 </div>
             </template>
 
@@ -215,8 +221,12 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
                         :class="{ 'error-warn-input': (hasConfirmPasswordInput && !isPasswordIdentical) }"
                         placeholder="•••••••••" required />
                 </el-form-item>
+                <el-form-item>
+                    <el-button @click="updatePassword" :disabled="changeDisabled" class="update-button">
+                        修改
+                    </el-button>
+                </el-form-item>
             </el-form>
-
         </el-card>
     </el-main>
 </template>
@@ -246,6 +256,11 @@ const telLegal = computed(() => chinaMobileRegex.test(newTel.value))
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.update-button {
+  font-size: 18px; /* 放大按钮字体 */
+  padding: 10px 20px; /* 增加按钮内边距 */
 }
 
 .change-card {
