@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted} from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
@@ -132,9 +132,34 @@ const imageHandler = () => {
         }
     };
 };
-
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+function handleScroll() {
+  const scrollY = window.scrollY;
+  if(Math.abs(scrollNow.value-scrollY)<=300)scrollNow.value = scrollY;
+//   if(scrollY > 100) {
+//     console.log('scrollY:', scrollY);
+//   } 
+}
+const scrollNow = ref(0);
 function handleReplace() {
-    editorRef.value.getQuill().getModule('toolbar').addHandler('image', imageHandler);
+    // editorRef.value.getQuill().getModule('toolbar').addHandler('image', imageHandler);、
+    const quill = editorRef.value.getQuill();
+    quill.getModule('toolbar').addHandler('image', imageHandler);
+    quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
+        //console.log('Copy event detected:', node);
+        const selection = window.getSelection();
+        if (selection) {
+            const range = selection.getRangeAt(0);
+            range.collapse(false);
+            setTimeout(() => {
+                //console.log('Scroll position:', scrollNow.value);
+                window.scrollTo(0, scrollNow.value); 
+            }, 0);
+        }
+        return delta;
+    });
     getAllEvent().then(res => {
         console.log(res);
         events.value = res.data.result;
@@ -239,4 +264,5 @@ button.disabled-button {
     height: 150px;
     object-fit: cover;
 }
+
 </style>
