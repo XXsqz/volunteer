@@ -2,7 +2,7 @@
     <div class="homepage">
         <img class="title_img" :src="'https://chinavolunteer.mca.gov.cn/site/static/img/header_bg.acdffe9.png'" />
 
-        <el-input class="search_input" v-model="search_input" @change='searchChange()' placeholder="搜索文章...">
+        <el-input class="search_input" v-model="search_input" @input='onSearch()' placeholder="搜索文章...">
         </el-input>
 
         <main style="">
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { getAllArticle } from '../../api/article';
+import { getAllArticle, findArticleByTitle } from '../../api/article';
 import ArticleCard from "../../components/ArticleCard.vue";
 import InputSearch from '../../components/InputSearch.vue'
 interface Article {
@@ -48,8 +48,6 @@ getAllArticle().then(res => {
     if (res.data.code === '000') {
         articles.value = res.data.result;
         totalnum.value = res.data.result.length;
-        //console.log(res.data.result)
-        // console.log(items.value[0].mainImage)
     }
 });
 
@@ -69,8 +67,22 @@ function goToPage(page: number) {
     currentPage.value = page
 }
 
-function searchChange() {
-    console.log("change to " + search_input.value)
+function onSearch() {
+    if (search_input.value.length == 0) {
+        getAllArticle().then(res => {
+            if (res.data.code === '000') {
+                articles.value = res.data.result;
+                totalnum.value = res.data.result.length;
+            }
+        });
+    } else {
+        findArticleByTitle(search_input.value).then(res => {
+            if (res.data.code === '000') {
+                articles.value = res.data.result;
+                totalnum.value = res.data.result.length;
+            }
+        });
+    }
 }
 
 const page_range = computed(() => {
@@ -82,6 +94,7 @@ const page_range = computed(() => {
     }
     return range;
 })
+
 const paginatedArticles = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;

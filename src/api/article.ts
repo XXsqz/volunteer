@@ -79,3 +79,9 @@ export const adminGetDraft = () => {
         })
 }
 
+export const findArticleByTitle = (searched: string) => {
+    return axios.get(`${ARTICLE_MODULE}/getByTitle/${searched}`)
+        .then(res => {
+            return res
+        })
+}
