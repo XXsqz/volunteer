@@ -214,7 +214,7 @@ function exitProject(id: number) {
                         {{ formattedTime(personalEvent.eventStartTime) }}
                     </el-descriptions-item>
 
-                    <el-descriptions-item label="开始时间">
+                    <el-descriptions-item label="结束时间">
                         {{ formattedTime(personalEvent.eventEndTime) }}
                     </el-descriptions-item>
 
