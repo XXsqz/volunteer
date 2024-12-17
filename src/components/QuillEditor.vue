@@ -1,51 +1,48 @@
+<!-- QuillEditor.vue -->
 <template>
-    <div>
-      <!-- 容器用于 Quill 编辑器挂载 -->
-      <div id="editor"></div>
-    </div>
-  </template>
-  
-  <script>
-  import Quill from 'quill';
-  import 'quill/dist/quill.snow.css'; // 引入 Quill 的默认主题样式
-  
-  export default {
-    name: 'QuillEditor',
-    data() {
-      return {
-        quill: null, // 存储 Quill 实例
-      };
+  <div ref="editorContainer"></div>
+</template>
+
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
+
+
+const props = defineProps({
+  modelValue: String, // 父组件传入的内容绑定
+});
+const emit = defineEmits(['update:modelValue']);
+
+const editorContainer = ref<HTMLElement | null>(null);
+let quillInstance: Quill | null = null;
+
+onMounted(() => {
+  quillInstance = new Quill(editorContainer.value!, {
+    theme: 'snow',
+    placeholder: '请输入内容...',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        ['image', 'code-block'],
+      ],
     },
-    mounted() {
-      // 初始化 Quill 编辑器
-      this.quill = new Quill('#editor', {
-        theme: 'snow', // 主题: snow（默认）或 bubble
-        placeholder: '请输入内容...',
-        modules: {
-          toolbar: [
-            [{ header: [1, 2, false] }],
-            ['bold', 'italic', 'underline'],
-            ['image', 'code-block'],
-          ],
-        },
-      });
-  
-      // 监听内容变化
-      this.quill.on('text-change', () => {
-        console.log('编辑器内容:', this.quill.root.innerHTML);
-      });
-    },
-    beforeDestroy() {
-      // 销毁 Quill 实例
-      this.quill = null;
-    },
-  };
-  </script>
-  
-  <style>
-  /* 自定义样式（可选） */
-  #editor {
-    height: 300px;
+  });
+
+  if (props.modelValue) {
+    quillInstance.setContents(JSON.parse(props.modelValue));
   }
-  </style>
-  
+
+  // 监听编辑器内容变化
+  quillInstance.on('text-change', () => {
+    const content = quillInstance!.getContents();
+    emit('update:modelValue', JSON.stringify(content)); // 触发更新事件
+  });
+});
+
+// 使用 `defineExpose` 暴露 Quill 实例
+defineExpose({
+  getQuill: () => quillInstance,
+});
+</script>

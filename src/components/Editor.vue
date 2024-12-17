@@ -27,7 +27,7 @@ var mainImage = [] as { url: string }[]; // 主图片
 const images = ref<string[]>([]); // 用于存储图片的 URL 列表
 const editorRef = ref(null);
 const isFormValid = computed(() => {
-    //console.log("content:",content.value);
+    console.log("content:",content.value);
     return title.value.trim() !== "" && author.value.trim() !== "" && content.value !== "";
 });
 
@@ -35,6 +35,7 @@ function submitArticle(flag: boolean) {
     try {
         const quill = editorRef.value.getQuill(); // 获取 Quill 实例
         const editorContent = quill.getContents();
+        console.log("editorContent:", editorContent);
         const editorText = quill.getText(0, 200);
         if (props.param1 === 0) {
             if (mainImage.length === 0) {
@@ -105,6 +106,8 @@ const resetForm = () => {
 };
 
 const onEditorChange = (content: any) => {
+    console.log("content:", content);
+    //updateContent(content);
     content.value = content;
 };
 
@@ -208,7 +211,7 @@ setTimeout(function () {
         </select>
         <UploadImg :limit="1" :file-list="mainImage" @getUrl="getMainImage($event)" @delUrl="delMainImage($event)"
             :disabled="false" />
-        <QuillEditor theme="snow" toolbar="full" ref="editorRef" v-model:content="content"
+        <QuillEditor theme="snow" toolbar="full" ref="editorRef" v-model="content"
             @update:content="onEditorChange" />
         <el-button id="parentIframe" @click.prevent="handleReplace()" type="primary" style="display: none">
         </el-button>
