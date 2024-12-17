@@ -82,10 +82,12 @@
     <div class="application" v-else-if="applied">
         <el-button type="primary" disabled class="disabled-button" >已申请成功</el-button>
     </div>
-    <div class="application" v-else-if="!full">
-        <el-button type="primary" @click="getinfo" >申请参加该项目</el-button>
-    </div>
-    <div class="application" v-else>
+    <!-- <div class="application" v-else-if="!full">
+        
+        <el-button id="parentIframe" @click.prevent="getinfo()" type="primary" style="display: none">
+        </el-button>
+    </div> -->
+    <div class="application" v-else-if="full">
         <el-button type="primary" disabled class="disabled-button">项目报名人数已满</el-button>
     </div>
     
@@ -160,6 +162,7 @@ function eventCheck(){
       if(new Date().getTime() < new Date(res.data.result.enrollStartTime).getTime())eventstart.value = false;
       if(new Date().getTime() > new Date(res.data.result.enrollEndTime).getTime())eventend.value = true;
       if(res.data.result.enrollNumber>= res.data.result.recruitNumber)full.value = true;
+      userApplied()
     })
 }
 function userApplied(){
@@ -170,6 +173,7 @@ function userApplied(){
                 applied.value = true;
             }
         });
+      if(eventstart.value === true && eventend.value === false && full.value === false &&applied.value === false)getinfo();
     });
 }
 function getinfo(){
@@ -221,14 +225,17 @@ function handleArticleContent(id: number) {
         author.value = res.data.result.author;
         eventId.value = res.data.result.eventId;
         eventCheck();
-        userApplied();
         console.log(JSON.parse(res.data.result.content));
         const delta = JSON.parse(res.data.result.content);
         quill.setContents(delta);
         htmlContent.value = quill.root.innerHTML;
     });
 }
-/*<button data-tooltip="回到顶部" data-tooltip-position="left" data-tooltip-will-hide-on-click="true" aria-label="回到顶部" type="button" class="Button CornerButton Button--plain css-4lspwd"></button> */
+setTimeout(function () {
+    if (document) {
+        document.getElementById("parentIframe").click();
+    }
+}, 0);
 </script>
 
 <style scoped>
