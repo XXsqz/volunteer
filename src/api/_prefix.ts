@@ -9,3 +9,5 @@ export const ARTICLE_MODULE = `${API_MODULE}/articles`
 export const EVENT_MODULE = `${API_MODULE}/events`
 //申请模块
 export const REGISTER_MODULE = `${API_MODULE}/registration`
+//提醒模块
+export const NOTIFY_MODULE = `${API_MODULE}/notify`
