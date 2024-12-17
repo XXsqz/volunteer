@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted} from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
+import  QuillEditor from '../components/QuillEditor.vue';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
 import { getAllEvent } from '../api/event';
