@@ -41,3 +41,10 @@ export const deleteRegistration = (eventId: number) => {
             return res
         })
 }
+
+export const getEventRegistrations = (eventId: number) => {
+    return axios.get(`${REGISTER_MODULE}/get/${eventId}`)
+        .then(res => {
+            return res
+        })
+}

@@ -13,7 +13,7 @@
                 </ul>
             </nav>
         </aside>
-        <main v-if="activeMenu === 'view-project'&& if_edit_event=== false">
+        <main v-if="activeMenu === 'view-project'&& if_edit_event=== false && view_event=== false">
           <div v-if="!searchable_event">
             <el-icon name="filter" @click="searchable_event = true" class="large-icon">
             <Filter/>
@@ -63,6 +63,7 @@
                 <th>活动地址</th>
                 <th>类型</th>
                 <th>是否结束</th>
+                <th>报名情况</th>
                 <th>最近更新时间</th>
                 <th>操作</th>
               </tr>
@@ -75,8 +76,12 @@
                 <td>{{ event.location }}</td>
                 <td>{{ parseCategory(event.type)}}</td>
                 <td>{{ event.finished ? '已结束' : '未结束' }}</td>
+                <td>{{ event.enrollNumber }} / {{ event.recruitNumber }} 
+                  <a @click="viewRegister(event.id)" style="color: blue; text-decoration: underline; cursor: pointer;">查看</a>
+                </td>
                 <td>{{ parseTime(event.updateTime) }}</td>
                 <td>
+                    <button class="view-button" @click="viewevent(event.id)">查看</button>
                     <button class="edit-button" @click="editevent(event.id)">修改</button>
                     <button class="delete-button" @click="deleteevent(event.id)">删除</button>
                 </td>
@@ -86,6 +91,58 @@
         </main>
         <main v-if="activeMenu === 'view-project'&& if_edit_event=== true">
             <NewTable :param1="editid_event" @submitted="handleEventSubmitted"/>
+        </main>
+        <main v-if="activeMenu === 'view-project'&& view_event=== true">
+          <el-card v-if="event_viewed" class="event-details-card">
+            <el-form :model="event_viewed" label-width="120px" class="form-container">
+              <div class="form-row">
+                <el-form-item label="项目名称:">
+                  <div class="form-value">{{ event_viewed.name }}</div>
+                </el-form-item>
+                <el-form-item label="项目类型:">
+                  <div class="form-value">{{ parseCategory(event_viewed.type) }}</div>
+                </el-form-item>
+              </div>
+              <div class="form-row">
+                <el-form-item label="项目开始时间:">
+                  <div class="form-value">{{ parseTime(event_viewed.eventStartTime) }}</div>
+                </el-form-item>
+                <el-form-item label="项目结束时间:">
+                  <div class="form-value">{{ parseTime(event_viewed.eventEndTime) }}</div>
+                </el-form-item>
+              </div>
+              <div class="form-row">
+                <el-form-item label="报名开始时间:">
+                  <div class="form-value">{{ parseTime(event_viewed.enrollStartTime) }}</div>
+                </el-form-item>
+                <el-form-item label="报名结束时间:">
+                  <div class="form-value">{{ parseTime(event_viewed.enrollEndTime) }}</div>
+                </el-form-item>
+              </div>
+              <div class="form-row">
+                <el-form-item label="活动地点:">
+                  <div class="form-value">{{ event_viewed.location }}</div>
+                </el-form-item>
+                <el-form-item label="招募人数:">
+                  <div class="form-value">{{ event_viewed.recruitNumber }}</div>
+                </el-form-item>
+                <el-form-item label="报名人数:">
+                  <div class="form-value">{{ event_viewed.enrollNumber }}</div>
+                </el-form-item>
+              </div>
+              <div class="form-row">
+                <el-form-item label="联系人:">
+                  <div class="form-value">{{ event_viewed.contactPeople }}</div>
+                </el-form-item>
+                <el-form-item label="联系电话:">
+                  <div class="form-value">{{ event_viewed.contactPhone }}</div>
+                </el-form-item>
+              </div>
+              <el-form-item>
+                <el-button type="primary" @click="view_event = false">返回</el-button>
+              </el-form-item>
+            </el-form>
+          </el-card>
         </main>
         <main v-if="activeMenu === 'view-article'&& if_edit_article=== false">
           <div v-if="!searchable_article">
@@ -129,6 +186,7 @@
                 <td>{{ article.abstracts }}...</td>
                 <td>{{ article.eventName }}</td>
                 <td>
+                    <button class="view-button" @click="viewarticle(article.id)">预览</button>
                     <button class="edit-button" @click="editarticle(article.id)">修改</button>
                     <button class="delete-button" @click="deletearticle(article.id)">删除</button>
                 </td>
@@ -235,6 +293,8 @@ import { parseTime, parseCategory} from '../../utils/index';
 import { Filter } from "@element-plus/icons-vue";
 import { UserFilled } from "@element-plus/icons-vue"
 import { userInfo } from '../../api/user';
+import {router} from '../../router'
+import { getEventRegistrations } from '../../api/register';
 const name = ref('');
 const tel = ref('');
 const studentId = ref('');
@@ -277,10 +337,17 @@ interface Event{
     id: number;
     name: string;
     contactPeople: string;
+    contactPhone: string;
     location: string;
     type: string;
-    finished: string;
+    finished: boolean;
     updateTime: string;
+    recruitNumber: number;
+    enrollNumber: number;
+    eventStartTime: string;
+    eventEndTime: string;
+    enrollStartTime: string;
+    enrollEndTime : string;
 }
 const events = ref<Event[]>([])
 interface Article{
@@ -334,10 +401,11 @@ function handleArticle(){
 function handleEvent(){
     adminGetEvent().then(res => {
         if (res.data.code === '000') {
-            //console.log("获取成功:", res);
+            res.data.result.forEach(event => {
+                event.finished = event.eventEndTime < new Date().toISOString();
+            });
             events.value = res.data.result;
             filtered_events.value = events.value;
-            //console.log(events.value);
         }
         else if (res.data.code === '400') {
             alert("获取文章失败，请稍后重试！");
@@ -380,7 +448,7 @@ watch(activeMenu, (newValue) => {
   localStorage.setItem('activeMenu', newValue);
 });
 function setActiveMenu(menu: string){
-    if(if_edit_article.value||if_edit_event.value||if_edit_draft.value){
+    if(if_edit_article.value||if_edit_event.value||if_edit_draft.value||activeMenu.value === 'new-article'){
       ElMessageBox.confirm('您的修改未保存，确定要离开编辑页面吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -522,7 +590,59 @@ const resetSearch = () => {
     filtered_articles.value = articles.value;
     filtered_drafts.value = drafts.value;
 };
-
+interface User{
+    name: string;
+    phone: string;
+    studentId: string;
+}
+const users = ref<User[]>([]);
+function viewRegister(id: number){
+  getEventRegistrations(id).then(res => {
+  if (res.data.code === '000') {
+    console.log("获取报名信息成功:", res);
+    users.value = res.data.result;
+    let message = `
+      <table style="border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ddd; padding: 8px;">学号</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">姓名</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">电话</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    users.value.forEach(user => {
+      message += `
+        <tr>
+          <td style="border: 1px solid #ddd; padding: 8px;">${user.studentId}</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${user.name}</td>
+          <td style="border: 1px solid #ddd; padding: 8px;">${user.phone}</td>
+        </tr>
+      `;
+    });
+    message += `
+        </tbody>
+      </table>
+    `;
+    ElMessageBox.alert(message, '报名情况', {
+      dangerouslyUseHTMLString: true,
+      });
+    };
+    if (res.data.code === '400') {
+     alert("获取报名信息失败，请稍后重试！");
+    }
+  });
+};
+const view_event = ref(false);
+const event_viewed = ref<Event>();
+function viewevent(id: number){
+  view_event.value = true;
+  event_viewed.value = events.value.find(event => event.id === id);
+};
+function viewarticle(id: number){
+  router.push({ path: '/volunteerDetail/' + id });
+};
 </script>
 
 <style scoped>
@@ -720,6 +840,19 @@ table thead th {
 .pagination {
     margin-top: 20px;
     text-align: center;
+}
+.view-button {
+  background-color: rgb(14, 132, 201); /* 绿色 */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 .edit-button {
