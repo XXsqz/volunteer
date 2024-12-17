@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted} from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount,getCurrentInstance} from 'vue';
 import  QuillEditor from '../components/QuillEditor.vue';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
@@ -135,34 +135,51 @@ const imageHandler = () => {
         }
     };
 };
+const isToolbarFixed = ref(false);
+const toolBar=ref(null);
+const handleScroll = () => {
+//     console.log(editorRef.value.$el.querySelector('.ql-editor'));
+//     console.log(editorRef.value.$el.querySelector('.ql-editor').getBoundingClientRect());
+  const editor = editorRef.value.$el.querySelector('.ql-editor');
+  const editorRec = editor.getBoundingClientRect();
+  isToolbarFixed.value = editorRec.top < 0;
+};
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll);
 });
-function handleScroll() {
-  const scrollY = window.scrollY;
-  if(Math.abs(scrollNow.value-scrollY)<=300)scrollNow.value = scrollY;
-//   if(scrollY > 100) {
-//     console.log('scrollY:', scrollY);
-//   } 
-}
-const scrollNow = ref(0);
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+// onMounted(() => {
+//   window.addEventListener('scroll', handleScroll);
+// });
+// function handleScroll() {
+//   const scrollY = window.scrollY;
+//   if(Math.abs(scrollNow.value-scrollY)<=300)scrollNow.value = scrollY;
+// //   if(scrollY > 100) {
+// //     console.log('scrollY:', scrollY);
+// //   } 
+// }
+// const scrollNow = ref(0);
 function handleReplace() {
     // editorRef.value.getQuill().getModule('toolbar').addHandler('image', imageHandler);、
     const quill = editorRef.value.getQuill();
     quill.getModule('toolbar').addHandler('image', imageHandler);
-    quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
-        //console.log('Copy event detected:', node);
-        const selection = window.getSelection();
-        if (selection) {
-            const range = selection.getRangeAt(0);
-            range.collapse(false);
-            setTimeout(() => {
-                //console.log('Scroll position:', scrollNow.value);
-                window.scrollTo(0, scrollNow.value); 
-            }, 0);
-        }
-        return delta;
-    });
+    // quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
+    //     //console.log('Copy event detected:', node);
+    //     const selection = window.getSelection();
+    //     if (selection) {
+    //         const range = selection.getRangeAt(0);
+    //         range.collapse(false);
+    //         setTimeout(() => {
+    //             //console.log('Scroll position:', scrollNow.value);
+    //             window.scrollTo(0, scrollNow.value); 
+    //         }, 0);
+    //     }
+    //     return delta;
+    // });
     getAllEvent().then(res => {
         console.log(res);
         events.value = res.data.result;
@@ -211,8 +228,8 @@ setTimeout(function () {
         </select>
         <UploadImg :limit="1" :file-list="mainImage" @getUrl="getMainImage($event)" @delUrl="delMainImage($event)"
             :disabled="false" />
-        <QuillEditor theme="snow" toolbar="full" ref="editorRef" v-model="content"
-            @update:content="onEditorChange" />
+            <QuillEditor theme="snow" toolbar="full" ref="editorRef" v-model="content"
+             @update:content="onEditorChange" />
         <el-button id="parentIframe" @click.prevent="handleReplace()" type="primary" style="display: none">
         </el-button>
         <div style="display: flex;">
@@ -267,5 +284,13 @@ button.disabled-button {
     height: 150px;
     object-fit: cover;
 }
-
+.fixed-toolbar {
+    :deep(.ql-toolbar.ql-snow){
+  position: fixed !important;
+  top: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background-color: white !important;
+}
+}
 </style>

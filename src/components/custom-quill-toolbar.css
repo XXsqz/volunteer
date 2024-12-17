@@ -1,0 +1,38 @@
+.ql-toolbar {
+    background-color: #f0f0f0; /* 设置工具栏背景色 */
+    border: 1px solid #ccc; /* 设置工具栏边框 */
+    width: 100%; /* 工具栏宽度 */
+    z-index: 1000; /* 确保工具栏在其他内容之上 */
+    transition: top 0.3s; /* 添加过渡效果 */
+}
+  
+.ql-toolbar.fixed {
+    width: 85%;
+    position: fixed; /* 固定位置 */
+    top: 0; /* 工具栏在页面顶部时的偏移量 */
+}
+
+.ql-toolbar .ql-picker {
+    color: #333; /* 设置工具栏选择器的颜色 */
+}
+  
+.ql-toolbar .ql-picker-label {
+    font-weight: bold; /* 设置工具栏选择器标签的字体粗细 */
+}
+
+.ql-toolbar .ql-picker-options {
+    background-color: #fff; /* 设置工具栏选择器选项的背景色 */
+    border: 1px solid #ccc; /* 设置工具栏选择器选项的边框 */
+}
+  
+.ql-toolbar button {
+    background: none; /* 设置工具栏按钮的背景 */
+    border: none; /* 设置工具栏按钮的边框 */
+    color: #333; /* 设置工具栏按钮的颜色 */
+}
+  
+.ql-toolbar button:hover {
+    background-color: #e0e0e0; /* 设置工具栏按钮悬停时的背景色 */
+
+
+}
