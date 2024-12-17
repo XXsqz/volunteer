@@ -41,6 +41,9 @@ function logout(event: Event) {
       <el-col :span="3" class="header-icon">
         <router-link to="/dashboard" v-slot="{navigate}">
           <el-icon @click="navigate" :size="35" color="blue" v-if="token&&role!='ADMIN'"><User /></el-icon >
+            <router-link to="/edit" v-slot="{navigate}">
+              <el-icon @click="navigate" :size="35" color="blue" v-if="token&&role ==='ADMIN'"><User /></el-icon >
+            </router-link>
         <router-link to="/login" v-slot="{navigate}">
             <el-icon @click="navigate" :size="35" color="blue" v-if="!token"><Key /></el-icon>
           </router-link>

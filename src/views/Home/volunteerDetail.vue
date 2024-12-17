@@ -118,7 +118,7 @@ const eventend = ref(false);
 const token = sessionStorage.getItem('token');
 const showBackToTop = ref(false);
 const buttonTop = ref('80%'); // 初始位置
-
+const role = sessionStorage.getItem('role');
 function handleScroll() {
   const scrollY = window.scrollY;
   showBackToTop.value = scrollY > 200; // 当滚动距离超过200px时显示按钮
@@ -173,7 +173,7 @@ function userApplied(){
                 applied.value = true;
             }
         });
-      if(eventstart.value === true && eventend.value === false && full.value === false &&applied.value === false)getinfo();
+      if(eventstart.value === true && eventend.value === false && full.value === false && applied.value === false && role!="ADMIN")getinfo();
     });
 }
 function getinfo(){
