@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount,getCurrentInstance} from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch} from 'vue';
 import  QuillEditor from '../components/QuillEditor.vue';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { addArticle, getArticle, updateArticle } from '../api/article';
@@ -11,8 +11,7 @@ import UploadImg from "../components/UploadImg.vue";
 const props = defineProps<{
     param1: number;
 }>();
-const emits = defineEmits(['submitted']);
-
+const emits = defineEmits(['submitted', 'update:haveEdited']);
 const title = ref("");
 const author = ref("");
 const eventId = ref(0);
@@ -30,7 +29,11 @@ const isFormValid = computed(() => {
     console.log("content:",content.value);
     return title.value.trim() !== "" && author.value.trim() !== "" && content.value !== "";
 });
-
+const have_edited = ref(false);
+watch([title, author, content], ([newTitle, newAuthor, newContent]) => {
+  have_edited.value = newTitle.trim() !== "" || newAuthor.trim() !== "" || newContent !== "";
+  emits('update:haveEdited', have_edited.value);
+});
 function submitArticle(flag: boolean) {
     try {
         const quill = editorRef.value.getQuill(); // 获取 Quill 实例

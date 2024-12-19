@@ -202,13 +202,13 @@
                 </table>
             </main>
             <main v-if="activeMenu === 'view-article' && if_edit_article === true">
-                <NewProject :param1="editid_article" @submitted="handleArticleSubmitted" />
+                <NewProject :param1="editid_article" @submitted="handleArticleSubmitted"/>
             </main>
             <main v-if="activeMenu === 'new-project'">
                 <NewTable :param1="0" />
             </main>
             <main v-if="activeMenu === 'new-article'">
-                <NewProject :param1="0" />
+                <NewProject :param1="0" @update:haveEdited="haveEdited"/>
             </main>
             <main v-if="activeMenu === 'drafts' && if_edit_draft === false">
                 <div v-if="!searchable_draft">
@@ -260,7 +260,7 @@
                 </table>
             </main>
             <main v-if="activeMenu === 'drafts' && if_edit_draft === true">
-                <NewProject :param1="editid_draft" @submitted="handledraftSubmitted" />
+                <NewProject :param1="editid_draft" @submitted="handledraftSubmitted"/>
             </main>
             <main v-if="activeMenu === 'home'">
                 <div class="avatar-area">
@@ -455,7 +455,7 @@ watch(activeMenu, (newValue) => {
     localStorage.setItem('activeMenu', newValue);
 });
 function setActiveMenu(menu: string) {
-    if (if_edit_article.value || if_edit_event.value || if_edit_draft.value || activeMenu.value === 'new-article') {
+    if (if_edit_article.value || if_edit_event.value || if_edit_draft.value || have_edited.value) {
         ElMessageBox.confirm('您的修改未保存，确定要离开编辑页面吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -464,6 +464,7 @@ function setActiveMenu(menu: string) {
             if_edit_article.value = false;
             if_edit_event.value = false;
             if_edit_draft.value = false;
+            have_edited.value = false;
             activeMenu.value = menu;
             if (menu === 'view-article') handleArticle();
             if (menu === 'view-project') handleEvent();
@@ -683,6 +684,10 @@ function viewevent(id: number) {
 function viewarticle(id: number) {
     router.push({ path: '/volunteerDetail/' + id });
 };
+const have_edited = ref(false);
+function haveEdited(value: boolean) {
+    have_edited.value = value;
+}
 </script>
 
 <style scoped>
