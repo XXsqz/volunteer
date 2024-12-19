@@ -48,3 +48,10 @@ export const getEventRegistrations = (eventId: number) => {
             return res
         })
 }
+
+export const getRegistrationsExport = (eventId: number) => {
+    return axios.get(`${REGISTER_MODULE}/export/${eventId}`)
+        .then(res => {
+            return res
+        })
+}

@@ -294,7 +294,7 @@ import { Filter } from "@element-plus/icons-vue";
 import { UserFilled } from "@element-plus/icons-vue"
 import { userInfo } from '../../api/user';
 import {router} from '../../router'
-import { getEventRegistrations } from '../../api/register';
+import { getEventRegistrations, getRegistrationsExport } from '../../api/register';
 const name = ref('');
 const tel = ref('');
 const studentId = ref('');
@@ -596,44 +596,64 @@ interface User{
     studentId: string;
 }
 const users = ref<User[]>([]);
-function viewRegister(id: number){
+  function viewRegister(id: number) {
   getEventRegistrations(id).then(res => {
-  if (res.data.code === '000') {
-    console.log("获取报名信息成功:", res);
-    users.value = res.data.result;
-    let message = `
-      <table style="border-collapse: collapse; width: 100%;">
-        <thead>
-          <tr>
-            <th style="border: 1px solid #ddd; padding: 8px;">学号</th>
-            <th style="border: 1px solid #ddd; padding: 8px;">姓名</th>
-            <th style="border: 1px solid #ddd; padding: 8px;">电话</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-    users.value.forEach(user => {
-      message += `
-        <tr>
-          <td style="border: 1px solid #ddd; padding: 8px;">${user.studentId}</td>
-          <td style="border: 1px solid #ddd; padding: 8px;">${user.name}</td>
-          <td style="border: 1px solid #ddd; padding: 8px;">${user.phone}</td>
-        </tr>
+    if (res.data.code === '000') {
+      console.log("获取报名信息成功:", res);
+      users.value = res.data.result;
+      let message = `
+        <table style="border-collapse: collapse; width: 100%;">
+          <thead>
+            <tr>
+              <th style="border: 1px solid #ddd; padding: 8px;">学号</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">姓名</th>
+              <th style="border: 1px solid #ddd; padding: 8px;">电话</th>
+            </tr>
+          </thead>
+          <tbody>
       `;
-    });
-    message += `
-        </tbody>
-      </table>
-    `;
-    ElMessageBox.alert(message, '报名情况', {
-      dangerouslyUseHTMLString: true,
+      users.value.forEach(user => {
+        message += `
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">${user.studentId}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${user.name}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${user.phone}</td>
+          </tr>
+        `;
       });
-    };
-    if (res.data.code === '400') {
-     alert("获取报名信息失败，请稍后重试！");
+      message += `
+          </tbody>
+        </table>
+      `;
+
+      ElMessageBox({
+        title: '报名情况',
+        message: message, 
+        dangerouslyUseHTMLString: true,
+        confirmButtonText: '导出',
+        cancelButtonText: '关闭',
+        showConfirmButton: true,
+        showCancelButton: true,
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            exportData(id);
+            done();
+          } else {
+            done();
+          }
+        }
+      });
+    } else if (res.data.code === '400') {
+      alert("获取报名信息失败，请稍后重试！");
     }
   });
-};
+}
+function exportData(id: number) {
+  getRegistrationsExport(id).then(res => {
+    
+      console.log("导出报名信息成功:", res.data);
+  });
+}
 const view_event = ref(false);
 const event_viewed = ref<Event>();
 function viewevent(id: number){

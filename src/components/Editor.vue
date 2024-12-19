@@ -100,7 +100,7 @@ const resetForm = () => {
     author.value = "";
     content.value = "";
     eventId.value = 0;
-    mainImage = []
+    mainImage = [];
     images.value = [];
     editorRef.value.getQuill().setContents([{ insert: "\n" }]); // 清空编辑器内容
 };
