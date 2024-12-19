@@ -50,7 +50,7 @@ export const getEventRegistrations = (eventId: number) => {
 }
 
 export const getRegistrationsExport = (eventId: number) => {
-    return axios.get(`${REGISTER_MODULE}/export/${eventId}`)
+    return axios.get(`${REGISTER_MODULE}/export/${eventId}`, { responseType: 'blob' })
         .then(res => {
             return res
         })
