@@ -1,5 +1,5 @@
 <template>
-    <ul>
+    <ul style="display: grid; justify-content: center;">
         <li v-for="notification in notifications">
             <el-card style="margin: 5px">
                 <div>{{ notification.message }}</div>
