@@ -74,16 +74,15 @@ function toggleNotification() {
                 </router-link>
             </el-col>
 
-            <el-col :span="1" class="header-icon">
+            <el-col :span="1" class="header-icon" v-if="token && role != 'ADMIN'">
                 <router-link to="/dashboard" v-slot="{ navigate }">
-                    <el-icon class="real-icon" @click="navigate" :size="35" color="blue"
-                        v-if="token && role != 'ADMIN'">
+                    <el-icon class="real-icon" @click="navigate" :size="35" color="blue">
                         <User />
                     </el-icon>
                 </router-link>
             </el-col>
 
-            <el-col :span="1" class="header-icon"  v-if="token && role === 'ADMIN'" >
+            <el-col :span="1" class="header-icon" v-if="token && role === 'ADMIN'">
                 <router-link to="/edit" v-slot="{ navigate }">
                     <el-icon @click="navigate" :size="35" color="blue">
                         <User />
@@ -92,10 +91,10 @@ function toggleNotification() {
             </el-col>
 
 
-            <el-col :span="1" class="header-icon">
+            <el-col :span="1" class="header-icon" v-if="token && role != 'ADMIN'">
                 <el-popover placement="bottom" width=300 trigger="click">
                     <template #reference>
-                        <el-icon :size="35" v-if="token && role != 'ADMIN'">
+                        <el-icon :size="35">
                             <Bell class="real-icon" @click="toggleNotification" color="blue" />
                         </el-icon>
                     </template>
@@ -115,14 +114,12 @@ function toggleNotification() {
             </el-col>
 
 
-            <el-col :span="1" class="header-icon">
-                <el-icon :size="35" v-if="token">
+            <el-col :span="1" class="header-icon" v-if="token">
+                <el-icon :size="35">
                     <SwitchButton class="real-icon" @click="logout" color="blue" />
                 </el-icon>
             </el-col>
 
-            <el-col :span="1" class="header-icon">
-            </el-col>
 
         </el-row>
     </el-header>
