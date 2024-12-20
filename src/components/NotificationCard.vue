@@ -46,4 +46,9 @@ function markAsRead(notification: Notification, updater: Function) {
     display: flex;
     justify-content: flex-end;
 }
+
+
+li {
+    list-style: none
+}
 </style>
