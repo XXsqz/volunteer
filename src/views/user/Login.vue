@@ -62,13 +62,13 @@ function handleLogin() {
 <template>
   <el-main class="main-frame bgimage">
     <form class="form">
-  <div class="title">Welcome,<br><span>sign up to continue</span></div>
+  <div class="title">欢迎，<br><span>请登录以继续使用该网站</span></div>
   <!--<label v-if="!hasTelInput" for="tel"></label>-->
   <label v-if="!telLegal && hasTelInput" for="tel" class="error-warn">手机号不合法</label>
   <label v-else for="tel" class="error-warn" style="opacity: 0;">0</label>
-  <input class="input" name="PhoneNumber" placeholder="Phone" type="PhoneNumber"
+  <input class="input" name="PhoneNumber" placeholder="手机号" type="PhoneNumber"
   required :class="{'error-warn-input' :(hasTelInput && !telLegal)}" v-model="tel">
-  <input class="input" name="Password" placeholder="Password" type="password" v-model="password">
+  <input class="input" name="Password" placeholder="密码" type="password" v-model="password">
   <!--<div class="login-with">
     <div class="button-log"><b>t</b></div>
     <div class="button-log">
@@ -85,8 +85,8 @@ function handleLogin() {
   <router-link to="/register">
     <!-- <button class="button-confirm" @click="navigate">注册一个喵~</button> -->
     <p class="signup-link">
-        No account?
-        <a href="">Sign up</a>
+        没有用户？
+        <a href="">注册</a>
     </p>
   </router-link>
 
@@ -235,9 +235,10 @@ function handleLogin() {
 }
 .signup-link {
   color: #6B7280;
-  font-size: 0.875rem;
+  font-size:1.25rem;
   line-height: 1.25rem;
   text-align: center;
+  
 }
 
 .signup-link a {
