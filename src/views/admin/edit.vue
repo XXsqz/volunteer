@@ -186,7 +186,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="article in articles" :key="article.id">
+                        <tr v-for="article in filtered_articles" :key="article.id">
                             <td>{{ article.id }}</td>
                             <td>{{ article.title }}</td>
                             <td>{{ article.author }}</td>
@@ -491,7 +491,8 @@ const searchable_draft = ref(false);
 function editarticle(id: number) {
     if_edit_article.value = true;
     editid_article.value = id;
-    console.log("编辑文章", id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    //console.log("编辑文章", id);
 };
 function deletearticle(id: number) {
     deleteArticle(id).then(res => {
@@ -509,7 +510,8 @@ function deletearticle(id: number) {
 function editevent(id: number) {
     if_edit_event.value = true;
     editid_event.value = id;
-    console.log("编辑项目", id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    //console.log("编辑项目", id);
 };
 function deleteevent(id: number) {
     deleteEvent(id).then(res => {
@@ -526,7 +528,8 @@ function deleteevent(id: number) {
 function editdraft(id: number) {
     if_edit_draft.value = true;
     editid_draft.value = id;
-    console.log("编辑草稿", id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    //console.log("编辑草稿", id);
 };
 function handleArticleSubmitted() {
     if_edit_article.value = false;

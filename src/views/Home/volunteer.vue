@@ -56,15 +56,23 @@ const totalPage = computed(() => {
 })
 
 function prevPage() {
-    if (currentPage.value > 1) currentPage.value--
+    if (currentPage.value > 1){
+        currentPage.value--
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
 }
 
 function nextPage() {
-    if (currentPage.value < totalPage.value) currentPage.value++
+    if (currentPage.value < totalPage.value){
+        currentPage.value++
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 function goToPage(page: number) {
     currentPage.value = page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function onSearch() {
