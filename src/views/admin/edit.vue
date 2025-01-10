@@ -58,6 +58,7 @@
                     <div class="btns">
                         <el-button type="primary" @click="search_event"> 筛选 </el-button>
                         <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
+                        <el-button type="primary" @click="close_search_event"> 关闭筛选 </el-button>
                     </div>
                 </div>
                 <table>
@@ -172,6 +173,7 @@
                     <div class="btns">
                         <el-button type="primary" @click="search_article"> 筛选 </el-button>
                         <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
+                        <el-button type="primary" @click="close_search_article"> 关闭筛选 </el-button>
                     </div>
                 </div>
                 <table>
@@ -231,6 +233,7 @@
                     <div class="btns">
                         <el-button type="primary" @click="search_drafts"> 筛选 </el-button>
                         <el-button type="primary" @click="resetSearch"> 清空筛选条件 </el-button>
+                        <el-button type="primary" @click="close_search_draft"> 关闭筛选 </el-button>
                     </div>
                 </div>
                 <table>
@@ -585,6 +588,18 @@ function search_drafts() {
         filtered_drafts.value = filtered_drafts.value.filter(draft => draft.author.includes(draft_author.value));
     }
 }
+function close_search_event() {
+    searchable_event.value = false;
+    filtered_events.value = events.value;
+};
+function close_search_article() {
+    searchable_article.value = false;
+    filtered_articles.value = articles.value;
+};
+function close_search_draft() {
+    searchable_draft.value = false;
+    filtered_drafts.value = drafts.value;
+};
 const resetSearch = () => {
     searchQuery.value = '';
     isCompleted.value = 'null';

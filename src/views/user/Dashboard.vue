@@ -148,7 +148,7 @@ function exitProject(id: number) {
 </script>
 
 <template>
-    <el-main class="main-container bgimage">
+    <el-main class="main-container">
         <el-card class="aside-card">
             <div class="avatar-area">
                 <el-avatar :icon="UserFilled" :size="80">
@@ -273,10 +273,6 @@ function exitProject(id: number) {
 </template>
 
 <style scoped>
-.bgimage {
-    background-image: url("../../assets/shopping-1s-1084px.svg");
-}
-
 .error-warn {
     color: red;
 }
